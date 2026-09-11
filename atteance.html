@@ -672,6 +672,20 @@
     }
 
     /* Attendance Storage View Styles */
+    .storage-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .storage-export-btns {
+      display: flex;
+      gap: 8px;
+    }
+
     .storage-filter-bar {
       display: flex;
       gap: 12px;
@@ -682,6 +696,20 @@
       border-radius: 16px;
       padding: 14px 18px;
       margin-bottom: 24px;
+    }
+
+    .storage-filter-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .storage-badges-wrap {
+      margin-left: auto;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
     .storage-day-card {
@@ -735,6 +763,56 @@
       margin-bottom: 8px;
     }
 
+    /* Date & Session Strip */
+    .auto-datetime-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(0, 242, 254, 0.25);
+      border-radius: 14px;
+      padding: 10px 18px;
+      margin-bottom: 20px;
+      font-size: 0.88rem;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .datetime-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .session-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .roster-action-btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .profile-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 30px;
+    }
+
     /* Toast Notification */
     #toast {
       position: fixed;
@@ -784,29 +862,355 @@
       display: block;
     }
 
-    /* Responsive */
+    /* Responsive - Comprehensive Mobile Formatting */
+    @media (max-width: 768px) {
+      .app-container {
+        margin: 18px auto 0;
+        padding: 0 14px;
+      }
+      .glass-card {
+        padding: 22px 16px;
+        border-radius: 18px;
+        margin-bottom: 18px;
+      }
+    }
+
     @media (max-width: 640px) {
+      body {
+        padding-bottom: 30px;
+      }
+      .navbar {
+        padding: 10px 14px;
+      }
       .nav-container {
         flex-direction: column;
         align-items: stretch;
+        gap: 10px;
       }
-      .nav-links {
+      .nav-brand-group {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 6px;
+        width: 100%;
+      }
+      .brand {
+        font-size: 1rem;
         justify-content: center;
+        letter-spacing: 0.5px;
+      }
+      .nav-badges {
+        justify-content: center;
+        gap: 6px;
+      }
+      /* Clean swipeable horizontal tabs on mobile */
+      .nav-links {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 6px;
+        padding: 2px 2px 8px 2px;
+        width: 100%;
+        scrollbar-width: none;
+        justify-content: flex-start;
+      }
+      .nav-links::-webkit-scrollbar {
+        display: none;
+      }
+      .nav-tab-btn, .btn-logout {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        font-size: 0.78rem;
+        padding: 7px 11px;
+        border-radius: 8px;
+      }
+
+      .app-container {
+        margin-top: 14px;
+        padding: 0 10px;
       }
       .glass-card {
-        padding: 24px 18px;
+        padding: 18px 14px;
+        border-radius: 16px;
+        margin-bottom: 16px;
       }
       h1 {
-        font-size: 1.8rem;
+        font-size: 1.55rem;
+        letter-spacing: 0.5px;
+        line-height: 1.25;
       }
-      .class-grid, .sessions-grid {
+      .subtitle {
+        font-size: 0.82rem;
+        margin-bottom: 16px;
+      }
+
+      /* Class breakdown on mobile */
+      .class-grid {
         grid-template-columns: 1fr;
+        gap: 10px;
       }
-      .button-group {
-        flex-direction: column;
-      }
-      .button-group button {
+      .class-preview-tag {
         width: 100%;
+        justify-content: center;
+        font-size: 0.8rem;
+        padding: 8px 10px;
+        word-break: break-word;
+      }
+
+      /* Date & Session strip formatted cleanly */
+      .auto-datetime-strip {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+        padding: 12px 14px !important;
+      }
+      .datetime-row, .session-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+      .datetime-row input[type="date"] {
+        max-width: 170px;
+        font-size: 0.85rem;
+        padding: 6px 10px;
+      }
+
+      /* Action buttons layout: Primary full-width on top, 3 secondary buttons aligned below */
+      .button-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .button-group .btn-result {
+        width: 100% !important;
+        flex: 1 1 100%;
+        order: -1;
+        padding: 13px 18px;
+        font-size: 0.95rem;
+        font-weight: 800;
+      }
+      .button-group button:not(.btn-result) {
+        flex: 1 1 calc(33.333% - 6px);
+        min-width: 65px;
+        padding: 10px 4px;
+        font-size: 0.78rem;
+        gap: 4px;
+      }
+
+      /* Stats Overview: balanced 2x2 grid + 5th item centered */
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 18px;
+        margin-bottom: 18px;
+      }
+      .stat-card {
+        padding: 10px 8px;
+        min-height: 70px;
+        border-radius: 12px;
+      }
+      .stat-card:nth-child(5) {
+        grid-column: span 2;
+      }
+      .stat-num {
+        font-size: 1.45rem;
+        min-height: 30px;
+        line-height: 30px;
+      }
+      .stat-label {
+        font-size: 0.68rem;
+        letter-spacing: 0.5px;
+      }
+
+      /* Report card responsive wrapping */
+      #paa {
+        padding: 16px 14px;
+        font-size: 0.82rem;
+        line-height: 1.6;
+        border-radius: 14px;
+        word-break: break-word;
+        margin-top: 18px;
+      }
+
+      /* Attendance Storage View Mobile Formats */
+      .storage-header-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .storage-header-bar h2 {
+        font-size: 1.25rem !important;
+      }
+      .storage-export-btns {
+        width: 100%;
+      }
+      .storage-export-btns button {
+        flex: 1;
+        justify-content: center;
+        font-size: 0.76rem;
+        padding: 8px 10px;
+      }
+
+      .storage-filter-bar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: 14px;
+      }
+      .storage-filter-item {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      .storage-filter-item label {
+        font-size: 0.72rem;
+      }
+      .storage-filter-item select {
+        width: 100% !important;
+        padding: 8px 10px;
+        font-size: 0.85rem;
+      }
+      .storage-filter-item:nth-child(3) {
+        grid-column: span 2; /* DATE selector spans full width */
+      }
+      .storage-badges-wrap {
+        grid-column: span 2;
+        margin-left: 0;
+        width: 100%;
+        justify-content: space-between;
+        padding-top: 6px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        gap: 6px;
+      }
+      .storage-badges-wrap .badge {
+        font-size: 0.72rem;
+        padding: 4px 8px;
+      }
+
+      /* Day Card & Sessions on mobile */
+      .storage-day-card {
+        padding: 14px 12px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+      }
+      .day-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+      }
+      .sessions-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .session-box {
+        padding: 12px;
+        border-radius: 12px;
+        word-break: break-word;
+      }
+
+      /* Roster view mobile */
+      .roster-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .search-input {
+        max-width: 100%;
+        width: 100%;
+        font-size: 0.85rem;
+      }
+      .dropzone {
+        padding: 20px 14px;
+        border-radius: 14px;
+      }
+      .dropzone-icon {
+        font-size: 2rem;
+        margin-bottom: 6px;
+      }
+      .dropzone-title {
+        font-size: 0.95rem;
+      }
+      .roster-action-btns {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+      }
+      .roster-action-btns button {
+        width: 100%;
+      }
+      .add-student-box {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .add-student-box input,
+      .add-student-box button {
+        width: 100%;
+      }
+      .table-wrapper {
+        max-height: 380px;
+        border-radius: 10px;
+      }
+      table {
+        font-size: 0.78rem;
+      }
+      th, td {
+        padding: 8px 8px;
+      }
+      .action-edit-btn, .action-del-btn {
+        padding: 4px 8px;
+        font-size: 0.72rem;
+        margin-right: 2px;
+      }
+
+      /* Profile view mobile */
+      .profile-summary-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+        margin-top: 18px !important;
+      }
+
+      /* Modal card mobile */
+      .modal-overlay {
+        padding: 12px;
+      }
+      .modal-card {
+        padding: 20px 14px;
+        border-radius: 16px;
+        width: 100%;
+      }
+      .modal-card .button-group {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .modal-card .button-group button {
+        width: 100%;
+      }
+
+      /* Toast Notification on mobile */
+      #toast {
+        bottom: 14px;
+        right: 12px;
+        left: 12px;
+        max-width: calc(100% - 24px);
+        text-align: center;
+        padding: 11px 14px;
+        font-size: 0.8rem;
+        border-radius: 10px;
+      }
+
+      /* Prevent iOS auto-zoom on input focus */
+      input[type="text"],
+      input[type="password"],
+      input[type="email"],
+      input[type="date"],
+      select {
+        font-size: 16px;
       }
     }
   </style>
@@ -820,7 +1224,7 @@
   <!-- Top Navigation Bar (Visible when Logged In) -->
   <header class="navbar" id="app-navbar">
     <div class="nav-container">
-      <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+      <div class="nav-brand-group">
         <a href="#" class="brand" onclick="showTab('attendance')">
           🎓 COLLEGE ATTENDANCE PORTAL
         </a>
@@ -973,14 +1377,14 @@
     <!-- Attendance Form Card (The Box) -->
     <div class="glass-card" id="main">
       <!-- Date & Session Live Status Strip with Date Option -->
-      <div class="auto-datetime-strip" style="display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(0, 242, 254, 0.25); border-radius: 14px; padding: 10px 18px; margin-bottom: 20px; font-size: 0.88rem; flex-wrap: wrap; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+      <div class="auto-datetime-strip">
+        <div class="datetime-row">
           <label for="att-selected-date" style="color: var(--neon-cyan); font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer; margin: 0;">
             <span>📅 DATE:</span>
           </label>
           <input type="date" id="att-selected-date" style="background: rgba(10, 15, 30, 0.8); border: 1px solid rgba(0, 242, 254, 0.35); border-radius: 8px; color: #38bdf8; padding: 6px 12px; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer;">
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="session-row">
           <span style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px;">Auto Session:</span>
           <span id="auto-session-badge" class="badge" style="background: rgba(0, 242, 254, 0.15); color: var(--neon-cyan); border: 1px solid rgba(0, 242, 254, 0.35); font-weight: 700; font-size: 0.82rem; cursor: pointer; padding: 5px 12px; border-radius: 8px; transition: all 0.2s;" title="Auto-detected from current time. Click to toggle session if needed." onclick="toggleSessionOverride()">
             🌅 Forenoon (FN)
@@ -1007,7 +1411,7 @@
       <div class="hint">***Give input as comma separated values (Eg: 101, 102, 103)***</div>
 
       <div class="button-group">
-        <button class="btn-primary" onclick="clickk()">⚡ GET RESULT</button>
+        <button class="btn-primary btn-result" onclick="clickk()">⚡ GET RESULT</button>
         <button class="btn-secondary" onclick="resetForm()">🔄 RESET</button>
         <button class="btn-purple" onclick="copyt()">📋 COPY</button>
         <button class="btn-secondary" onclick="downloadReportTxt()" style="font-size: 0.85rem;">📄 TXT</button>
@@ -1045,7 +1449,7 @@
   <!-- ======================== 3. ATTENDANCE STORAGE VIEW (YEAR -> MONTH -> DAY -> FN/AN) ======================== -->
   <div class="app-container" id="storage-view" style="display: none;">
     <div class="glass-card">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+      <div class="storage-header-bar">
         <div>
           <h2 style="font-size: 1.5rem; color: var(--neon-cyan);">
             📅 Attendance Storage Register
@@ -1054,7 +1458,7 @@
             Hierarchical Storage: <strong>Year ➔ Month ➔ Day ➔ (FN & AN)</strong>. If same session occurs on a day, it is replaced.
           </p>
         </div>
-        <div style="display: flex; gap: 8px;">
+        <div class="storage-export-btns">
           <button type="button" class="btn-success btn-sm" onclick="exportMonthlyAttendance('xlsx')">
             📊 Export Month (.xlsx)
           </button>
@@ -1066,16 +1470,16 @@
 
       <!-- Filter Controls: Year, Month & Date -->
       <div class="storage-filter-bar">
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="storage-filter-item">
           <label style="font-size: 0.82rem; font-weight: 700; color: #cbd5e1;">YEAR:</label>
-          <select id="storage-year-select" style="width: 110px; padding: 8px 12px; font-size: 0.9rem;" onchange="handleStorageYearOrMonthChange()">
+          <select id="storage-year-select" style="min-width: 90px; padding: 8px 12px; font-size: 0.9rem;" onchange="handleStorageYearOrMonthChange()">
             <!-- Populated via JS -->
           </select>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="storage-filter-item">
           <label style="font-size: 0.82rem; font-weight: 700; color: #cbd5e1;">MONTH:</label>
-          <select id="storage-month-select" style="width: 155px; padding: 8px 12px; font-size: 0.9rem;" onchange="handleStorageYearOrMonthChange()">
+          <select id="storage-month-select" style="min-width: 130px; padding: 8px 12px; font-size: 0.9rem;" onchange="handleStorageYearOrMonthChange()">
             <option value="01">01 - January</option>
             <option value="02">02 - February</option>
             <option value="03">03 - March</option>
@@ -1091,14 +1495,14 @@
           </select>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="storage-filter-item">
           <label style="font-size: 0.82rem; font-weight: 700; color: #cbd5e1;">DATE:</label>
-          <select id="storage-date-select" style="width: 140px; padding: 8px 12px; font-size: 0.9rem;" onchange="renderAttendanceStorage()">
+          <select id="storage-date-select" style="min-width: 100px; padding: 8px 12px; font-size: 0.9rem;" onchange="renderAttendanceStorage()">
             <option value="all">All Dates</option>
           </select>
         </div>
 
-        <div style="margin-left: auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <div class="storage-badges-wrap">
           <span class="badge badge-cyan" id="storage-days-count">0 Days Recorded</span>
           <span class="badge badge-green" id="storage-sessions-count">0 Sessions (FN/AN)</span>
         </div>
@@ -1130,7 +1534,7 @@
         <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="handleFileUpload(event)">
       </div>
 
-      <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 10px;">
+      <div class="roster-action-btns">
         <button type="button" class="btn-secondary btn-sm" onclick="downloadSampleTemplate('xlsx')">
           📥 Download Template (.xlsx)
         </button>
@@ -1264,7 +1668,7 @@
       </form>
 
       <!-- Account Summary Info Cards -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 30px;">
+      <div class="profile-summary-grid">
         <div class="stat-card" style="text-align: left;">
           <div class="stat-label">CURRENT ACTIVE CLASS</div>
           <div style="font-size: 1.1rem; font-weight: 700; color: var(--neon-cyan); margin-top: 4px;" id="summary-class">
@@ -2720,8 +3124,12 @@
       const blob = new Blob([t], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const { dateVal, session } = getCurrentAttendanceDateTime();
+      const link = document.createElement("a");
+      link.href = url;
       link.download = `Attendance_Report_${currentUser ? currentUser.classSection.replace(/\s+/g, '_') : 'Class'}_${dateVal}_${session}.txt`;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
       URL.revokeObjectURL(url);
       showToast("💾 Saved report as text file!");
     }
