@@ -2820,6 +2820,7 @@
         <div style="font-size: 0.76rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 8px;">
           <div>Class: <strong>${rec.classSection}</strong></div>
           <div>Present: <strong style="color: var(--neon-green);">${rec.presentCount} / ${rec.totalStudents}</strong> (${rec.percentage}%)</div>
+          <div>Absent: <strong style="color: var(--neon-pink);">${rec.absCount}</strong> | On-Duty: <strong style="color: var(--neon-amber);">${rec.odCount}</strong></div>
         </div>
 
         <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.08);">
@@ -2857,6 +2858,7 @@
       lines.push(`${rec.classSection}`);
       lines.push(`TOTAL STUDENTS ON-ROLL: ${rec.totalStudents}`);
       lines.push(`TODAY'S NUMBER OF PHYSICAL PRESENT: ${rec.presentCount}`);
+      lines.push(`NUMBER OF STUDENTS ABSENT: ${rec.absCount}`);
       lines.push(`NUMBER OF STUDENTS WITH PERMITTED ON-DUTY: ${rec.odCount}`);
       lines.push(`ATTENDANCE PERCENTAGE: ${rec.percentage}%\n`);
 
@@ -3009,6 +3011,7 @@
       reportHtml += `${classHeading}<br>`;
       reportHtml += `TOTAL STUDENTS ON-ROLL: ${totalStudents}<br>`;
       reportHtml += `TODAY'S NUMBER OF PHYSICAL PRESENT: ${pr}<br>`;
+      reportHtml += `NUMBER OF STUDENTS ABSENT: ${lab}<br>`;
       reportHtml += `NUMBER OF STUDENTS WITH PERMITTED ON-DUTY: ${lod}<br>`;
       reportHtml += `ATTENDANCE PERCENTAGE: ${npc}%<br><br>`;
 

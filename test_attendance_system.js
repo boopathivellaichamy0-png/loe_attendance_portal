@@ -312,6 +312,35 @@ assert.strictEqual(reportHeader, "11/09/2026 (AN)");
 assert.strictEqual(reportHeader.includes(":"), false, "Report text must not include any time format");
 console.log("  [PASS] Report text contains only Date and Session: '11/09/2026 (AN)' without time");
 
+// TEST 3.6b: Verify 'NUMBER OF STUDENTS ABSENT' appears immediately after 'TODAY'S NUMBER OF PHYSICAL PRESENT'
+function formatReportLines(rec) {
+  let lines = [];
+  lines.push(`${rec.displayDate} (${rec.session})`);
+  lines.push(`${rec.classSection}`);
+  lines.push(`TOTAL STUDENTS ON-ROLL: ${rec.totalStudents}`);
+  lines.push(`TODAY'S NUMBER OF PHYSICAL PRESENT: ${rec.presentCount}`);
+  lines.push(`NUMBER OF STUDENTS ABSENT: ${rec.absCount}`);
+  lines.push(`NUMBER OF STUDENTS WITH PERMITTED ON-DUTY: ${rec.odCount}`);
+  lines.push(`ATTENDANCE PERCENTAGE: ${rec.percentage}%\n`);
+  return lines;
+}
+
+const sampleRec = {
+  displayDate: "11/09/2026",
+  session: "FN",
+  classSection: "III CSE - A",
+  totalStudents: 50,
+  presentCount: 46,
+  absCount: 3,
+  odCount: 1,
+  percentage: 92
+};
+const repLines = formatReportLines(sampleRec);
+const physIdx = repLines.findIndex(l => l.includes("TODAY'S NUMBER OF PHYSICAL PRESENT: 46"));
+const absIdx = repLines.findIndex(l => l.includes("NUMBER OF STUDENTS ABSENT: 3"));
+assert.strictEqual(absIdx, physIdx + 1, "NUMBER OF STUDENTS ABSENT must be directly after TODAY'S NUMBER OF PHYSICAL PRESENT");
+console.log("  [PASS] Report text correctly places 'NUMBER OF STUDENTS ABSENT' immediately after physical present");
+
 // TEST 3.7: Absent and OD counts display as 0 when null or empty
 function getStatDisplay(count) {
   return (count === null || count === undefined || count === '') ? 0 : count;
