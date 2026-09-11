@@ -1,0 +1,2760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Attendance Portal - Faculty Management</title>
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- SheetJS for Excel (.xlsx, .xls) parsing and export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <style>
+    :root {
+      --neon-cyan: #00f2fe;
+      --neon-blue: #0072ff;
+      --neon-purple: #9d4edd;
+      --neon-pink: #ff007f;
+      --neon-green: #38ef7d;
+      --neon-amber: #f59e0b;
+      --neon-red: #ef4444;
+      --glass-bg: rgba(18, 24, 38, 0.85);
+      --glass-card: rgba(22, 30, 48, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-border-glow: rgba(0, 242, 254, 0.35);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --bg-dark: #020617;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at 15% 15%, #231138 0%, #0a0f24 45%, #020617 100%);
+      min-height: 100vh;
+      color: var(--text-main);
+      padding: 0 0 40px 0;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation Bar */
+    .navbar {
+      display: none; /* Shown when logged in */
+      background: rgba(10, 15, 30, 0.92);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 14px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-container {
+      max-width: 1150px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-decoration: none;
+      filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.35));
+    }
+
+    .nav-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .badge-cyan {
+      background: rgba(0, 242, 254, 0.12);
+      color: var(--neon-cyan);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+    }
+
+    .badge-purple {
+      background: rgba(157, 78, 221, 0.15);
+      color: #c77dff;
+      border: 1px solid rgba(157, 78, 221, 0.35);
+    }
+
+    .badge-green {
+      background: rgba(56, 239, 125, 0.15);
+      color: var(--neon-green);
+      border: 1px solid rgba(56, 239, 125, 0.3);
+    }
+
+    .badge-amber {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--neon-amber);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      list-style: none;
+      flex-wrap: wrap;
+    }
+
+    .nav-tab-btn {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      padding: 8px 15px;
+      border-radius: 10px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-tab-btn.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(0, 198, 255, 0.25), rgba(0, 114, 255, 0.25));
+      border-color: rgba(0, 242, 254, 0.4);
+      box-shadow: 0 0 12px rgba(0, 242, 254, 0.2);
+    }
+
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.12);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, 0.25);
+      color: #fff;
+    }
+
+    /* Main Content Container */
+    .app-container {
+      max-width: 860px;
+      margin: 32px auto 0;
+      padding: 0 20px;
+    }
+
+    /* Glassmorphism Card Style */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 32px 28px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    /* Headings */
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.3));
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    /* Form & Input Groups */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .input-group label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      letter-spacing: 0.8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .input-group label .label-hint {
+      font-size: 0.75rem;
+      color: var(--neon-cyan);
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="date"],
+    select {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid var(--glass-border);
+      background-color: rgba(15, 23, 42, 0.85);
+      border-radius: 12px;
+      padding: 13px 18px;
+      font-size: 0.98rem;
+      font-weight: 500;
+      color: var(--neon-cyan);
+      font-family: inherit;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    select, input[type="date"] {
+      cursor: pointer;
+    }
+
+    select option {
+      background: #0b1120;
+      color: #f8fafc;
+      padding: 12px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--neon-cyan);
+      background-color: rgba(15, 23, 42, 0.98);
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin: -6px 0 20px 0;
+      text-align: left;
+      font-style: italic;
+    }
+
+    /* Class Breakdown Grid */
+    .class-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr 1fr;
+      gap: 12px;
+    }
+
+    .class-sub-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .class-preview-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      padding: 6px 12px;
+      border-radius: 10px;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--neon-cyan);
+      font-weight: 600;
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 13px 22px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4);
+      flex: 1;
+      min-width: 130px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(0, 198, 255, 0.6);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      border: 1px solid var(--glass-border);
+      flex: 1;
+      min-width: 110px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+      color: #052e16;
+      box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3);
+      flex: 1;
+      min-width: 130px;
+    }
+
+    .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(56, 239, 125, 0.5);
+    }
+
+    .btn-purple {
+      background: linear-gradient(135deg, #7928ca, #9d4edd);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(157, 78, 221, 0.35);
+      flex: 1;
+      min-width: 110px;
+    }
+
+    .btn-purple:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(157, 78, 221, 0.55);
+    }
+
+    .btn-sm {
+      padding: 7px 13px;
+      font-size: 0.78rem;
+      border-radius: 8px;
+    }
+
+    /* Stats Grid (Revealed below the box only when GET RESULT is clicked) */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 14px 12px;
+      text-align: center;
+      transition: all 0.2s ease;
+      min-height: 84px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .stat-card:hover {
+      border-color: var(--glass-border-glow);
+      transform: translateY(-2px);
+    }
+
+    .stat-num {
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--neon-cyan);
+      min-height: 38px;
+      line-height: 38px;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    /* Glowing Output Card */
+    #paa {
+      display: none;
+      background: var(--glass-bg);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(0, 242, 254, 0.35);
+      border-radius: 20px;
+      text-align: left;
+      padding: 24px 26px;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: #e2e8f0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 254, 0.15);
+      margin-top: 24px;
+      position: relative;
+    }
+
+    #paa b {
+      color: var(--neon-cyan);
+    }
+
+    /* Auth Views */
+    #auth-view {
+      max-width: 520px;
+      margin: 40px auto 0;
+    }
+
+    .auth-tabs {
+      display: flex;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 5px;
+      margin-bottom: 24px;
+      gap: 6px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .auth-tab.active {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 198, 255, 0.35);
+    }
+
+    /* Upload Zone */
+    .dropzone {
+      border: 2px dashed rgba(0, 242, 254, 0.4);
+      border-radius: 18px;
+      padding: 32px 20px;
+      text-align: center;
+      background: rgba(15, 23, 42, 0.45);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-bottom: 20px;
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--neon-cyan);
+      background: rgba(0, 242, 254, 0.08);
+      transform: scale(1.01);
+    }
+
+    .dropzone-icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .dropzone-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 4px;
+    }
+
+    .dropzone-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* Student Roster Table */
+    .roster-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .search-input {
+      max-width: 280px;
+      padding: 9px 14px;
+      font-size: 0.88rem;
+    }
+
+    .table-wrapper {
+      max-height: 440px;
+      overflow-y: auto;
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      background: rgba(10, 15, 30, 0.6);
+    }
+
+    /* Custom Scrollbar */
+    .table-wrapper::-webkit-scrollbar {
+      width: 8px;
+    }
+    .table-wrapper::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .table-wrapper::-webkit-scrollbar-thumb {
+      background: rgba(0, 242, 254, 0.3);
+      border-radius: 4px;
+    }
+    .table-wrapper::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 242, 254, 0.6);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    th {
+      background: rgba(15, 23, 42, 0.95);
+      position: sticky;
+      top: 0;
+      padding: 12px 16px;
+      font-weight: 700;
+      color: var(--neon-cyan);
+      border-bottom: 1px solid var(--glass-border);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+    }
+
+    td {
+      padding: 11px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #e2e8f0;
+    }
+
+    tr:hover td {
+      background: rgba(0, 242, 254, 0.05);
+    }
+
+    /* Action buttons in Table */
+    .action-edit-btn {
+      background: rgba(0, 198, 255, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(0, 242, 254, 0.35);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-right: 6px;
+    }
+
+    .action-edit-btn:hover {
+      background: rgba(0, 198, 255, 0.35);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+    }
+
+    .action-del-btn {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .action-del-btn:hover {
+      background: rgba(239, 68, 68, 0.35);
+      color: #fff;
+    }
+
+    /* Edit Student Modal Overlay */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-card {
+      max-width: 440px;
+      width: 100%;
+      background: var(--glass-bg);
+      border: 1px solid rgba(0, 242, 254, 0.4);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 242, 254, 0.2);
+      animation: fadeIn 0.25s ease;
+    }
+
+    /* Attendance Storage View Styles */
+    .storage-filter-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+    }
+
+    .storage-day-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .storage-day-card:hover {
+      border-color: rgba(0, 242, 254, 0.3);
+    }
+
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sessions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .session-box {
+      background: rgba(10, 15, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 14px 16px;
+      position: relative;
+    }
+
+    .session-box.has-data {
+      border-color: rgba(0, 242, 254, 0.35);
+      background: rgba(0, 242, 254, 0.03);
+    }
+
+    .session-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--neon-cyan);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--neon-cyan);
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 242, 254, 0.3);
+      display: none;
+      z-index: 2000;
+      font-size: 0.9rem;
+      font-weight: 600;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Add Student Inline Form */
+    .add-student-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .add-student-box input {
+      flex: 1;
+      min-width: 130px;
+    }
+
+    /* Empty state notice */
+    .empty-state {
+      text-align: center;
+      padding: 36px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .nav-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .nav-links {
+        justify-content: center;
+      }
+      .glass-card {
+        padding: 24px 18px;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .class-grid, .sessions-grid {
+        grid-template-columns: 1fr;
+      }
+      .button-group {
+        flex-direction: column;
+      }
+      .button-group button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Datalist for Engineering Branches & Short Forms -->
+  <datalist id="engineering-courses-list"></datalist>
+  <datalist id="dept-short-list"></datalist>
+
+  <!-- Top Navigation Bar (Visible when Logged In) -->
+  <header class="navbar" id="app-navbar">
+    <div class="nav-container">
+      <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+        <a href="#" class="brand" onclick="showTab('attendance')">
+          🎓 COLLEGE ATTENDANCE PORTAL
+        </a>
+        <div class="nav-badges">
+          <span class="badge badge-purple" id="nav-dept-badge">Class</span>
+          <span class="badge badge-cyan" id="nav-count-badge">👥 0 Students</span>
+        </div>
+      </div>
+
+      <div class="nav-links">
+        <button class="nav-tab-btn active" id="tab-btn-attendance" onclick="showTab('attendance')">
+          📋 Attendance
+        </button>
+        <button class="nav-tab-btn" id="tab-btn-storage" onclick="showTab('storage')">
+          📅 Attendance Storage
+        </button>
+        <button class="nav-tab-btn" id="tab-btn-roster" onclick="showTab('roster')">
+          👥 Student Roster & Upload
+        </button>
+        <button class="nav-tab-btn" id="tab-btn-profile" onclick="showTab('profile')">
+          👤 Profile
+        </button>
+        <button class="btn-logout" onclick="logoutUser()">
+          🚪 Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================== 1. AUTH VIEW (LOGIN / REGISTER) ======================== -->
+  <div class="app-container" id="auth-view">
+    <div class="glass-card">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <span style="font-size: 2.6rem;">🏛️</span>
+        <h1 style="margin-top: 8px;">COLLEGE PORTAL</h1>
+        <p class="subtitle" id="auth-subtitle">Faculty & Department Attendance Management</p>
+      </div>
+
+      <div class="auth-tabs">
+        <div class="auth-tab" id="tab-signin" onclick="toggleAuthMode('signin')">Sign In</div>
+        <div class="auth-tab active" id="tab-signup" onclick="toggleAuthMode('signup')">Register Department</div>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="signin-form" style="display: none;" onsubmit="handleSignIn(event)">
+        <div class="input-group">
+          <label for="login-email">FACULTY EMAIL / LOGIN ID</label>
+          <input type="text" id="login-email" placeholder="e.g. faculty@college.edu or username" required>
+        </div>
+
+        <div class="input-group">
+          <label for="login-pwd">PASSWORD</label>
+          <input type="password" id="login-pwd" placeholder="Enter password" required>
+        </div>
+
+        <div class="button-group" style="margin-top: 24px;">
+          <button type="submit" class="btn-primary" style="width: 100%;">
+            🔐 SIGN IN
+          </button>
+        </div>
+      </form>
+
+      <!-- Sign Up Form (Register New Department) -->
+      <form id="signup-form" onsubmit="handleSignUp(event)">
+        <div class="input-group">
+          <label for="reg-faculty">FACULTY / IN-CHARGE NAME</label>
+          <input type="text" id="reg-faculty" placeholder="e.g. Dr. A. Kumar" required>
+        </div>
+
+        <!-- Branch / Department Name (Typeable with Suggestions) -->
+        <div class="input-group">
+          <label for="reg-dept">
+            <span>BRANCH / DEPARTMENT NAME</span>
+            <span class="label-hint">✏️ Type or Select Branch</span>
+          </label>
+          <input type="text" id="reg-dept" list="engineering-courses-list" placeholder="Type or select branch (e.g. Computer Science and Engineering)" required oninput="handleDeptChange('reg')">
+        </div>
+
+        <!-- Class Details Breakdown -->
+        <div style="margin-bottom: 20px;">
+          <label style="font-size: 0.85rem; font-weight: 700; color: #e2e8f0; letter-spacing: 0.8px; display: block; margin-bottom: 8px;">
+            CLASS DETAILS
+          </label>
+          <div class="class-grid">
+            <div>
+              <label class="class-sub-label" for="reg-year">Year</label>
+              <select id="reg-year" onchange="updateClassPreview('reg')" required>
+                <option value="I">I (1st Year)</option>
+                <option value="II" selected>II (2nd Year)</option>
+                <option value="III">III (3rd Year)</option>
+                <option value="IV">IV (4th Year)</option>
+              </select>
+            </div>
+            <div>
+              <label class="class-sub-label" for="reg-dept-short">Branch (Short Form)</label>
+              <input type="text" id="reg-dept-short" list="dept-short-list" placeholder="e.g. CSE or AIML" required oninput="updateClassPreview('reg')">
+            </div>
+            <div>
+              <label class="class-sub-label" for="reg-section">Section</label>
+              <select id="reg-section" onchange="updateClassPreview('reg')" required>
+                <option value="A" selected>A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="None">None</option>
+              </select>
+            </div>
+          </div>
+          <div class="class-preview-tag">
+            <span>Class Designation:</span>
+            <strong id="reg-class-preview" style="color: #fff;">II CSE - A</strong>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="reg-email">FACULTY EMAIL / LOGIN ID</label>
+          <input type="text" id="reg-email" placeholder="e.g. faculty@college.edu or username" required>
+        </div>
+
+        <div class="input-group">
+          <label for="reg-pwd">PASSWORD</label>
+          <input type="password" id="reg-pwd" placeholder="Create a secure password" required>
+        </div>
+
+        <div class="button-group" style="margin-top: 24px;">
+          <button type="submit" class="btn-primary" style="width: 100%;">
+            🚀 REGISTER DEPARTMENT & SIGN IN
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================== 2. ATTENDANCE GENERATOR VIEW ======================== -->
+  <div class="app-container" id="attendance-view" style="display: none;">
+    <h1 id="dept-header-title">Class Attendance</h1>
+    <p class="subtitle" id="dept-header-sub">Department Portal</p>
+
+    <!-- Empty Roster Banner Alert -->
+    <div id="empty-roster-alert" style="display: none; background: rgba(0, 198, 255, 0.1); border: 1px solid rgba(0, 242, 254, 0.4); border-radius: 16px; padding: 18px 22px; margin-bottom: 24px; text-align: center;">
+      <p style="font-size: 0.95rem; color: #bae6fd; margin-bottom: 12px;">
+        ℹ️ Your student roster is currently empty. Please upload your class Excel/CSV file to start taking attendance.
+      </p>
+      <button type="button" class="btn-primary btn-sm" onclick="showTab('roster')">
+        📁 Upload Class Excel File
+      </button>
+    </div>
+
+    <!-- Attendance Form Card (The Box) -->
+    <div class="glass-card" id="main">
+      <!-- Date & Session Live Status Strip with Date Option -->
+      <div class="auto-datetime-strip" style="display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(0, 242, 254, 0.25); border-radius: 14px; padding: 10px 18px; margin-bottom: 20px; font-size: 0.88rem; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <label for="att-selected-date" style="color: var(--neon-cyan); font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer; margin: 0;">
+            <span>📅 DATE:</span>
+          </label>
+          <input type="date" id="att-selected-date" style="background: rgba(10, 15, 30, 0.8); border: 1px solid rgba(0, 242, 254, 0.35); border-radius: 8px; color: #38bdf8; padding: 6px 12px; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer;">
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px;">Auto Session:</span>
+          <span id="auto-session-badge" class="badge" style="background: rgba(0, 242, 254, 0.15); color: var(--neon-cyan); border: 1px solid rgba(0, 242, 254, 0.35); font-weight: 700; font-size: 0.82rem; cursor: pointer; padding: 5px 12px; border-radius: 8px; transition: all 0.2s;" title="Auto-detected from current time. Click to toggle session if needed." onclick="toggleSessionOverride()">
+            🌅 Forenoon (FN)
+          </span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="abs">
+          <span>ROLL NO OF ABSENTEES:</span>
+          <span class="label-hint" id="abs-count-hint">0 selected</span>
+        </label>
+        <input type="text" id="abs" placeholder="e.g. 101, 102, 105" oninput="updateLiveInputHints()">
+      </div>
+
+      <div class="input-group">
+        <label for="od">
+          <span>ROLL NO OF ON-DUTY STUDENTS:</span>
+          <span class="label-hint" id="od-count-hint">0 selected</span>
+        </label>
+        <input type="text" id="od" placeholder="e.g. 103, 104" oninput="updateLiveInputHints()">
+      </div>
+
+      <div class="hint">***Give input as comma separated values (Eg: 101, 102, 103)***</div>
+
+      <div class="button-group">
+        <button class="btn-primary" onclick="clickk()">⚡ GET RESULT</button>
+        <button class="btn-secondary" onclick="resetForm()">🔄 RESET</button>
+        <button class="btn-purple" onclick="copyt()">📋 COPY</button>
+        <button class="btn-secondary" onclick="downloadReportTxt()" style="font-size: 0.85rem;">📄 TXT</button>
+      </div>
+    </div>
+
+    <!-- Dynamic Stats Overview (DISPLAYED BELOW THE BOX ONLY WHEN 'GET RESULT' IS CLICKED) -->
+    <div class="stats-grid" id="stats-overview" style="display: none; margin-top: 24px; margin-bottom: 20px;">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-label">Total On-Roll</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-present" style="color: var(--neon-green);">0</div>
+        <div class="stat-label">Physical Present</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-absent" style="color: var(--neon-pink);">0</div>
+        <div class="stat-label">Absentees</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-od" style="color: var(--neon-amber);">0</div>
+        <div class="stat-label">On-Duty</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-pct" style="color: var(--neon-cyan);">0%</div>
+        <div class="stat-label">Attendance %</div>
+      </div>
+    </div>
+
+    <!-- Glowing Report Output Card -->
+    <div id="paa"></div>
+  </div>
+
+  <!-- ======================== 3. ATTENDANCE STORAGE VIEW (YEAR -> MONTH -> DAY -> FN/AN) ======================== -->
+  <div class="app-container" id="storage-view" style="display: none;">
+    <div class="glass-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+        <div>
+          <h2 style="font-size: 1.5rem; color: var(--neon-cyan);">
+            📅 Attendance Storage Register
+          </h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+            Hierarchical Storage: <strong>Year ➔ Month ➔ Day ➔ (FN & AN)</strong>. If same session occurs on a day, it is replaced.
+          </p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-success btn-sm" onclick="exportMonthlyAttendance('xlsx')">
+            📊 Export Month (.xlsx)
+          </button>
+          <button type="button" class="btn-secondary btn-sm" onclick="exportMonthlyAttendance('csv')">
+            📥 CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Controls: Year, Month & Date -->
+      <div class="storage-filter-bar">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label style="font-size: 0.82rem; font-weight: 700; color: #cbd5e1;">YEAR:</label>
+          <select id="storage-year-select" style="width: 110px; padding: 8px 12px; font-size: 0.9rem;" onchange="handleStorageYearOrMonthChange()">
+            <!-- Populated via JS -->
+          </select>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label style="font-size: 0.82rem; font-weight: 700; color: #cbd5e1;">MONTH:</label>
+          <select id="storage-month-select" style="width: 155px; padding: 8px 12px; font-size: 0.9rem;" onchange="handleStorageYearOrMonthChange()">
+            <option value="01">01 - January</option>
+            <option value="02">02 - February</option>
+            <option value="03">03 - March</option>
+            <option value="04">04 - April</option>
+            <option value="05">05 - May</option>
+            <option value="06">06 - June</option>
+            <option value="07">07 - July</option>
+            <option value="08">08 - August</option>
+            <option value="09">09 - September</option>
+            <option value="10">10 - October</option>
+            <option value="11">11 - November</option>
+            <option value="12">12 - December</option>
+          </select>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label style="font-size: 0.82rem; font-weight: 700; color: #cbd5e1;">DATE:</label>
+          <select id="storage-date-select" style="width: 140px; padding: 8px 12px; font-size: 0.9rem;" onchange="renderAttendanceStorage()">
+            <option value="all">All Dates</option>
+          </select>
+        </div>
+
+        <div style="margin-left: auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <span class="badge badge-cyan" id="storage-days-count">0 Days Recorded</span>
+          <span class="badge badge-green" id="storage-sessions-count">0 Sessions (FN/AN)</span>
+        </div>
+      </div>
+
+      <!-- Container for list of days in chosen month -->
+      <div id="storage-days-list">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== 4. STUDENT ROSTER & EXCEL UPLOAD VIEW ======================== -->
+  <div class="app-container" id="roster-view" style="display: none;">
+    <div class="glass-card">
+      <h2 style="font-size: 1.5rem; margin-bottom: 6px; color: var(--neon-cyan);">
+        📁 Upload Class Student Dataset (Excel / CSV)
+      </h2>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 20px;">
+        Upload your class Excel (.xlsx / .xls) or CSV sheet containing <strong>Roll Number</strong> and <strong>Student Name</strong>.
+        The data will be stored as a dictionary for your account, and student count will be identified dynamically.
+      </p>
+
+      <!-- Drag & Drop Zone -->
+      <div class="dropzone" id="drop-area" onclick="document.getElementById('excel-file-input').click()">
+        <span class="dropzone-icon">📊</span>
+        <div class="dropzone-title">Click to Browse or Drag & Drop Excel File</div>
+        <div class="dropzone-sub">Supports .xlsx, .xls, and .csv files</div>
+        <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="handleFileUpload(event)">
+      </div>
+
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 10px;">
+        <button type="button" class="btn-secondary btn-sm" onclick="downloadSampleTemplate('xlsx')">
+          📥 Download Template (.xlsx)
+        </button>
+        <button type="button" class="btn-secondary btn-sm" onclick="downloadSampleTemplate('csv')">
+          📥 Download Template (.csv)
+        </button>
+        <button type="button" class="btn-secondary btn-sm" onclick="clearRosterData()" style="color: #fca5a5;">
+          🗑️ Clear Roster
+        </button>
+      </div>
+    </div>
+
+    <!-- Student Dictionary Management -->
+    <div class="glass-card">
+      <div class="roster-header">
+        <div>
+          <h2 style="font-size: 1.35rem; color: #fff;">
+            Current Student Dictionary
+          </h2>
+          <span class="badge badge-green" id="roster-count-badge" style="margin-top: 6px;">
+            Length: 0 Students
+          </span>
+        </div>
+        <input type="text" class="search-input" id="search-student" placeholder="🔍 Search Roll No or Name..." oninput="filterStudentTable()">
+      </div>
+
+      <!-- Add Student Manually -->
+      <div class="add-student-box">
+        <input type="text" id="new-roll" placeholder="Roll Number (e.g. 101)">
+        <input type="text" id="new-name" placeholder="Student Name (e.g. RAHUL S)">
+        <button type="button" class="btn-primary btn-sm" onclick="addSingleStudent()">
+          ➕ Add Student
+        </button>
+      </div>
+
+      <!-- Roster Table -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 50px;">#</th>
+              <th style="width: 140px;">Roll Number</th>
+              <th>Student Name</th>
+              <th style="width: 150px; text-align: center;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="roster-table-body">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== 5. DEPARTMENT PROFILE VIEW ======================== -->
+  <div class="app-container" id="profile-view" style="display: none;">
+    <div class="glass-card">
+      <h2 style="font-size: 1.6rem; margin-bottom: 8px; color: var(--neon-cyan);">
+        ⚙️ Department Profile Settings
+      </h2>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 24px;">
+        Configure your college Department Name, Class Details, and Faculty credentials. You can type any branch and edit your Login ID.
+      </p>
+
+      <form id="profile-form" onsubmit="handleSaveProfile(event)">
+        <!-- Branch / Department Name (Typeable with Suggestions) in Profile -->
+        <div class="input-group">
+          <label for="prof-dept">
+            <span>BRANCH / DEPARTMENT NAME</span>
+            <span class="label-hint">✏️ Type or Select Branch</span>
+          </label>
+          <input type="text" id="prof-dept" list="engineering-courses-list" placeholder="Type or select branch" required oninput="handleDeptChange('prof')">
+        </div>
+
+        <!-- Class Details Breakdown in Profile -->
+        <div style="margin-bottom: 20px;">
+          <label style="font-size: 0.85rem; font-weight: 700; color: #e2e8f0; letter-spacing: 0.8px; display: block; margin-bottom: 8px;">
+            CLASS DETAILS
+          </label>
+          <div class="class-grid">
+            <div>
+              <label class="class-sub-label" for="prof-year">Year</label>
+              <select id="prof-year" onchange="updateClassPreview('prof')" required>
+                <option value="I">I (1st Year)</option>
+                <option value="II">II (2nd Year)</option>
+                <option value="III">III (3rd Year)</option>
+                <option value="IV">IV (4th Year)</option>
+              </select>
+            </div>
+            <div>
+              <label class="class-sub-label" for="prof-dept-short">Branch (Short Form)</label>
+              <input type="text" id="prof-dept-short" list="dept-short-list" placeholder="e.g. CSE or AIML" required oninput="updateClassPreview('prof')">
+            </div>
+            <div>
+              <label class="class-sub-label" for="prof-section">Section</label>
+              <select id="prof-section" onchange="updateClassPreview('prof')" required>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="None">None</option>
+              </select>
+            </div>
+          </div>
+          <div class="class-preview-tag">
+            <span>Class Designation:</span>
+            <strong id="prof-class-preview" style="color: #fff;">-</strong>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="prof-faculty">FACULTY / IN-CHARGE NAME</label>
+          <input type="text" id="prof-faculty" required placeholder="e.g. Dr. A. Kumar">
+        </div>
+
+        <!-- Editable Login ID / Email -->
+        <div class="input-group">
+          <label for="prof-email">
+            <span>FACULTY EMAIL / LOGIN ID</span>
+            <span class="label-hint" style="color: var(--neon-green);">✏️ Editable Login ID</span>
+          </label>
+          <input type="text" id="prof-email" required placeholder="e.g. faculty@college.edu or username">
+        </div>
+
+        <div class="button-group" style="margin-top: 24px;">
+          <button type="submit" class="btn-primary">
+            💾 SAVE PROFILE CHANGES
+          </button>
+        </div>
+      </form>
+
+      <!-- Account Summary Info Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 30px;">
+        <div class="stat-card" style="text-align: left;">
+          <div class="stat-label">CURRENT ACTIVE CLASS</div>
+          <div style="font-size: 1.1rem; font-weight: 700; color: var(--neon-cyan); margin-top: 4px;" id="summary-class">
+            -
+          </div>
+        </div>
+
+        <div class="stat-card" style="text-align: left;">
+          <div class="stat-label">TOTAL STUDENTS IN ROSTER</div>
+          <div style="font-size: 1.1rem; font-weight: 700; color: var(--neon-green); margin-top: 4px;" id="summary-length">
+            0 Students
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== 6. EDIT STUDENT MODAL ======================== -->
+  <div class="modal-overlay" id="edit-student-modal">
+    <div class="modal-card">
+      <h3 style="font-size: 1.35rem; margin-bottom: 6px; color: var(--neon-cyan);">
+        ✏️ Edit Student Details
+      </h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
+        Update the roll number or name for this student in your roster dictionary.
+      </p>
+
+      <input type="hidden" id="edit-original-roll">
+
+      <div class="input-group">
+        <label for="edit-roll">ROLL NUMBER</label>
+        <input type="text" id="edit-roll" placeholder="Roll Number" required>
+      </div>
+
+      <div class="input-group">
+        <label for="edit-name">STUDENT NAME</label>
+        <input type="text" id="edit-name" placeholder="Student Name" required>
+      </div>
+
+      <div class="button-group" style="margin-top: 24px;">
+        <button type="button" class="btn-primary" onclick="saveStudentEdit()">
+          💾 Save Changes
+        </button>
+        <button type="button" class="btn-secondary" onclick="closeEditModal()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Message -->
+  <div id="toast"></div>
+
+  <!-- ======================== APPLICATION LOGIC ======================== -->
+  <script>
+    // --- Comprehensive Engineering Courses Dataset & Short Form Mapping ---
+    const ENGINEERING_COURSES = [
+      { name: "Computer Science and Engineering", short: "CSE" },
+      { name: "Artificial Intelligence and Machine Learning", short: "AIML" },
+      { name: "Artificial Intelligence and Data Science", short: "AIDS" },
+      { name: "Information Technology", short: "IT" },
+      { name: "Electronics and Communication Engineering", short: "ECE" },
+      { name: "Electrical and Electronics Engineering", short: "EEE" },
+      { name: "Mechanical Engineering", short: "MECH" },
+      { name: "Civil Engineering", short: "CIVIL" },
+      { name: "Biomedical Engineering", short: "BME" },
+      { name: "Biotechnology", short: "BT" },
+      { name: "Chemical Engineering", short: "CHEM" },
+      { name: "Aerospace Engineering", short: "AERO" },
+      { name: "Automobile Engineering", short: "AUTO" },
+      { name: "Mechatronics Engineering", short: "MCT" },
+      { name: "Cyber Security", short: "CS" },
+      { name: "Computer Science and Business Systems", short: "CSBS" },
+      { name: "Robotics and Automation", short: "RA" },
+      { name: "Agricultural Engineering", short: "AGRI" },
+      { name: "Marine Engineering", short: "MARINE" },
+      { name: "Aeronautical Engineering", short: "AERO" },
+      { name: "Food Technology", short: "FT" }
+    ];
+
+    // --- State Storage Keys ---
+    const STORAGE_USERS_KEY = 'attendance_app_users';
+    const STORAGE_SESSION_KEY = 'attendance_app_session';
+    const STORAGE_STUDENTS_PREFIX = 'attendance_app_students_';
+    const STORAGE_ATTENDANCE_PREFIX = 'attendance_records_';
+
+    let currentUser = null;
+    let studentDict = {}; // Current active student dictionary: { [rollNo]: studentName }
+
+    // Populate Datalist Options for Typeable Branch & Short Form
+    function populateDropdownOptions() {
+      const courseList = document.getElementById('engineering-courses-list');
+      const shortList = document.getElementById('dept-short-list');
+
+      courseList.innerHTML = '';
+      shortList.innerHTML = '';
+
+      ENGINEERING_COURSES.forEach(course => {
+        const opt = document.createElement('option');
+        opt.value = course.name;
+        courseList.appendChild(opt);
+
+        const shortOpt = document.createElement('option');
+        shortOpt.value = course.short;
+        shortOpt.label = course.name;
+        shortList.appendChild(shortOpt);
+      });
+    }
+
+    // Auto-analyze department name as user types or selects, and auto-fill short form
+    function handleDeptChange(prefix) {
+      const deptInput = document.getElementById(prefix + '-dept');
+      const shortInput = document.getElementById(prefix + '-dept-short');
+      const typed = deptInput.value.trim();
+
+      if (!typed) {
+        updateClassPreview(prefix);
+        return;
+      }
+
+      const found = ENGINEERING_COURSES.find(c => c.name.toLowerCase() === typed.toLowerCase() || c.short.toLowerCase() === typed.toLowerCase());
+      if (found) {
+        shortInput.value = found.short;
+      } else {
+        const lower = typed.toLowerCase();
+        if (lower.includes('machine learning') || lower.includes('aiml')) shortInput.value = 'AIML';
+        else if (lower.includes('data science') || lower.includes('aids')) shortInput.value = 'AIDS';
+        else if (lower.includes('computer science') || lower.includes('cse')) shortInput.value = 'CSE';
+        else if (lower.includes('information technology') || lower.includes('it')) shortInput.value = 'IT';
+        else if (lower.includes('electronics and communication') || lower.includes('ece')) shortInput.value = 'ECE';
+        else if (lower.includes('electrical and electronics') || lower.includes('eee')) shortInput.value = 'EEE';
+        else if (lower.includes('mechanical') || lower.includes('mech')) shortInput.value = 'MECH';
+        else if (lower.includes('civil')) shortInput.value = 'CIVIL';
+        else if (lower.includes('biomedical') || lower.includes('bme')) shortInput.value = 'BME';
+        else if (lower.includes('biotechnology') || lower.includes('biotech') || lower.includes('bt')) shortInput.value = 'BT';
+        else if (lower.includes('chemical')) shortInput.value = 'CHEM';
+        else if (lower.includes('aerospace')) shortInput.value = 'AERO';
+        else if (lower.includes('automobile')) shortInput.value = 'AUTO';
+        else if (lower.includes('mechatronics') || lower.includes('mct')) shortInput.value = 'MCT';
+        else if (lower.includes('cyber')) shortInput.value = 'CS';
+        else if (lower.includes('robotics')) shortInput.value = 'RA';
+        else if (lower.includes('agricultural') || lower.includes('agriculture')) shortInput.value = 'AGRI';
+        else if (lower.includes('marine')) shortInput.value = 'MARINE';
+        else if (lower.includes('aeronautical')) shortInput.value = 'AERO';
+        else if (lower.includes('food')) shortInput.value = 'FT';
+      }
+
+      updateClassPreview(prefix);
+    }
+
+    // Combine Year, Short Form, and Section into class designation
+    function buildClassString(year, short, section) {
+      if (!year) year = 'I';
+      if (!short) short = 'ENGG';
+      if (!section || section === 'None') {
+        return `${year} ${short}`;
+      }
+      return `${year} ${short} - ${section}`;
+    }
+
+    // Update live class designation preview
+    function updateClassPreview(prefix) {
+      const year = document.getElementById(prefix + '-year').value;
+      const short = (document.getElementById(prefix + '-dept-short').value || '').trim().toUpperCase();
+      const section = document.getElementById(prefix + '-section').value;
+
+      const classStr = buildClassString(year, short, section);
+      document.getElementById(prefix + '-class-preview').innerText = classStr;
+    }
+
+    // Parse existing class string into Year, Short Form, and Section
+    function parseClassDetails(classStr) {
+      if (!classStr) return { year: 'II', short: 'CSE', section: 'A' };
+      let year = 'II';
+      let short = 'CSE';
+      let section = 'A';
+
+      const parts = classStr.split('-').map(s => s.trim());
+      const leftParts = parts[0].split(/\s+/).filter(Boolean);
+
+      if (leftParts.length >= 2) {
+        year = leftParts[0];
+        short = leftParts.slice(1).join(' ');
+      } else if (leftParts.length === 1) {
+        year = leftParts[0];
+      }
+
+      if (parts.length > 1) {
+        section = parts[1];
+      } else {
+        section = 'None';
+      }
+
+      return { year, short, section };
+    }
+
+    // --- AUTOMATIC DATE, TIME & SESSION MANAGEMENT ---
+    let sessionOverride = null;
+
+    function getCurrentAttendanceDateTime() {
+      let chosenDate = new Date();
+      const dateInput = document.getElementById('att-selected-date');
+      if (dateInput && dateInput.value) {
+        const parts = dateInput.value.split('-').map(Number);
+        if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
+          chosenDate = new Date(parts[0], parts[1] - 1, parts[2], chosenDate.getHours(), chosenDate.getMinutes(), chosenDate.getSeconds());
+        }
+      }
+
+      const yyyy = String(chosenDate.getFullYear());
+      const mm = String(chosenDate.getMonth() + 1).padStart(2, '0');
+      const dd = String(chosenDate.getDate()).padStart(2, '0');
+      const dateVal = `${yyyy}-${mm}-${dd}`;
+      const fd = `${dd}/${mm}/${yyyy}`;
+
+      const timeStr = chosenDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+      // Forenoon (FN) before 12:30 PM; Afternoon (AN) 12:30 PM onwards
+      const autoSession = (chosenDate.getHours() < 12 || (chosenDate.getHours() === 12 && chosenDate.getMinutes() < 30)) ? 'FN' : 'AN';
+      const session = sessionOverride || autoSession;
+
+      return { now: chosenDate, yyyy, mm, dd, dateVal, fd, timeStr, session, isAuto: !sessionOverride };
+    }
+
+    function updateLiveDateTimeDisplay() {
+      const { fd, timeStr, session, isAuto } = getCurrentAttendanceDateTime();
+      const dateEl = document.getElementById('auto-date-display');
+      const timeEl = document.getElementById('auto-time-display');
+      const badgeEl = document.getElementById('auto-session-badge');
+
+      if (dateEl) dateEl.innerText = fd;
+      if (timeEl) timeEl.innerText = timeStr;
+      if (badgeEl) {
+        const modeTag = isAuto ? '<span style="font-size:0.68rem; opacity:0.8; margin-left:4px;">(Auto)</span>' : '<span style="font-size:0.68rem; opacity:0.8; margin-left:4px;">(Manual)</span>';
+        if (session === 'FN') {
+          badgeEl.innerHTML = `🌅 Forenoon (FN) ${modeTag}`;
+          badgeEl.style.background = 'rgba(0, 242, 254, 0.15)';
+          badgeEl.style.color = 'var(--neon-cyan)';
+          badgeEl.style.borderColor = 'rgba(0, 242, 254, 0.35)';
+        } else {
+          badgeEl.innerHTML = `🌇 Afternoon (AN) ${modeTag}`;
+          badgeEl.style.background = 'rgba(245, 158, 11, 0.15)';
+          badgeEl.style.color = 'var(--neon-amber)';
+          badgeEl.style.borderColor = 'rgba(245, 158, 11, 0.35)';
+        }
+      }
+    }
+
+    function toggleSessionOverride() {
+      const { session } = getCurrentAttendanceDateTime();
+      sessionOverride = (session === 'FN') ? 'AN' : 'FN';
+      updateLiveDateTimeDisplay();
+      showToast(`Switched session to ${sessionOverride === 'FN' ? '🌅 Forenoon (FN)' : '🌇 Afternoon (AN)'}`);
+    }
+
+    // Initialize Storage
+    function initStorage() {
+      populateDropdownOptions();
+
+      // Clean up legacy demo data if present
+      let users = JSON.parse(localStorage.getItem(STORAGE_USERS_KEY) || '[]');
+      users = users.filter(u => u.id !== 'demo-aiml' && u.email !== 'faculty@college.edu');
+      localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(users));
+      localStorage.removeItem(STORAGE_STUDENTS_PREFIX + 'demo-aiml');
+
+      // Initialize 1st tab date picker to today
+      const dateInput = document.getElementById('att-selected-date');
+      if (dateInput && !dateInput.value) {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        dateInput.value = `${y}-${m}-${d}`;
+      }
+
+      // Start automatic live date, time & session clock
+      updateLiveDateTimeDisplay();
+      if (!window._dateTimeInterval) {
+        window._dateTimeInterval = setInterval(updateLiveDateTimeDisplay, 1000);
+      }
+
+      // Check for active session
+      const savedSessionId = localStorage.getItem(STORAGE_SESSION_KEY);
+      if (savedSessionId && savedSessionId !== 'demo-aiml') {
+        const found = users.find(u => u.id === savedSessionId || u.email.toLowerCase() === savedSessionId.toLowerCase());
+        if (found) {
+          loginSession(found);
+          return;
+        }
+      }
+
+      // Default course selection for registration preview
+      document.getElementById('reg-dept').value = 'Computer Science and Engineering';
+      document.getElementById('reg-dept-short').value = 'CSE';
+      updateClassPreview('reg');
+
+      showAuthView();
+
+      if (users.length === 0) {
+        toggleAuthMode('signup');
+      } else {
+        toggleAuthMode('signin');
+      }
+    }
+
+    // --- Authentication Functions ---
+    function toggleAuthMode(mode) {
+      const signinTab = document.getElementById('tab-signin');
+      const signupTab = document.getElementById('tab-signup');
+      const signinForm = document.getElementById('signin-form');
+      const signupForm = document.getElementById('signup-form');
+
+      if (mode === 'signin') {
+        signinTab.classList.add('active');
+        signupTab.classList.remove('active');
+        signinForm.style.display = 'block';
+        signupForm.style.display = 'none';
+      } else {
+        signupTab.classList.add('active');
+        signinTab.classList.remove('active');
+        signupForm.style.display = 'block';
+        signinForm.style.display = 'none';
+      }
+    }
+
+    function handleSignIn(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
+      const pwd = document.getElementById('login-pwd').value;
+
+      const users = JSON.parse(localStorage.getItem(STORAGE_USERS_KEY) || '[]');
+      const user = users.find(u => (u.email.toLowerCase() === email || u.id === email) && u.password === pwd);
+
+      if (user) {
+        loginSession(user);
+        showToast(`Welcome, ${user.name}!`);
+      } else {
+        alert('Invalid login ID or password. If you do not have an account, please click "Register Department".');
+      }
+    }
+
+    function handleSignUp(e) {
+      e.preventDefault();
+      const faculty = document.getElementById('reg-faculty').value.trim();
+      const dept = document.getElementById('reg-dept').value.trim();
+      const year = document.getElementById('reg-year').value;
+      const deptShort = document.getElementById('reg-dept-short').value.trim().toUpperCase();
+      const section = document.getElementById('reg-section').value;
+      const email = document.getElementById('reg-email').value.trim();
+      const pwd = document.getElementById('reg-pwd').value;
+
+      if (!dept) {
+        alert('Please enter or select a Branch / Department Name.');
+        return;
+      }
+
+      const classSec = buildClassString(year, deptShort, section);
+
+      let users = JSON.parse(localStorage.getItem(STORAGE_USERS_KEY) || '[]');
+      if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        alert('An account with this Login ID / Email already exists. Please Sign In.');
+        toggleAuthMode('signin');
+        return;
+      }
+
+      const newUser = {
+        id: 'user_' + Date.now(),
+        email: email,
+        password: pwd,
+        name: faculty,
+        deptName: dept,
+        classSection: classSec,
+        year: year,
+        deptShort: deptShort,
+        section: section
+      };
+
+      users.push(newUser);
+      localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(users));
+      localStorage.setItem(STORAGE_STUDENTS_PREFIX + newUser.id, JSON.stringify({}));
+
+      loginSession(newUser);
+      showToast(`Welcome! Account registered for ${classSec}.`);
+    }
+
+    function loginSession(user) {
+      currentUser = user;
+      localStorage.setItem(STORAGE_SESSION_KEY, user.id);
+
+      loadStudentData();
+      updateNavbarAndHeader();
+      populateProfileForm();
+      renderRosterTable();
+
+      document.getElementById('auth-view').style.display = 'none';
+      document.getElementById('app-navbar').style.display = 'block';
+      showTab('attendance');
+    }
+
+    function logoutUser() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem(STORAGE_SESSION_KEY);
+        currentUser = null;
+        studentDict = {};
+        showAuthView();
+        toggleAuthMode('signin');
+        showToast('You have been logged out.');
+      }
+    }
+
+    function showAuthView() {
+      document.getElementById('auth-view').style.display = 'block';
+      document.getElementById('app-navbar').style.display = 'none';
+      document.getElementById('attendance-view').style.display = 'none';
+      document.getElementById('storage-view').style.display = 'none';
+      document.getElementById('roster-view').style.display = 'none';
+      document.getElementById('profile-view').style.display = 'none';
+    }
+
+    // --- Tab Navigation ---
+    function showTab(tabName) {
+      document.getElementById('attendance-view').style.display = tabName === 'attendance' ? 'block' : 'none';
+      document.getElementById('storage-view').style.display = tabName === 'storage' ? 'block' : 'none';
+      document.getElementById('roster-view').style.display = tabName === 'roster' ? 'block' : 'none';
+      document.getElementById('profile-view').style.display = tabName === 'profile' ? 'block' : 'none';
+
+      document.getElementById('tab-btn-attendance').classList.toggle('active', tabName === 'attendance');
+      document.getElementById('tab-btn-storage').classList.toggle('active', tabName === 'storage');
+      document.getElementById('tab-btn-roster').classList.toggle('active', tabName === 'roster');
+      document.getElementById('tab-btn-profile').classList.toggle('active', tabName === 'profile');
+
+      if (tabName === 'storage') {
+        populateStorageYearOptions();
+        renderAttendanceStorage();
+      } else if (tabName === 'roster') {
+        renderRosterTable();
+      }
+    }
+
+    // --- Student Dataset & Dictionary Management ---
+    function loadStudentData() {
+      if (!currentUser) return;
+      const raw = localStorage.getItem(STORAGE_STUDENTS_PREFIX + currentUser.id);
+      if (raw) {
+        try {
+          studentDict = JSON.parse(raw);
+        } catch (e) {
+          studentDict = {};
+        }
+      } else {
+        studentDict = {};
+        saveStudentData();
+      }
+      onStudentDataUpdated();
+    }
+
+    function saveStudentData() {
+      if (!currentUser) return;
+      localStorage.setItem(STORAGE_STUDENTS_PREFIX + currentUser.id, JSON.stringify(studentDict));
+      onStudentDataUpdated();
+    }
+
+    function onStudentDataUpdated() {
+      const length = Object.keys(studentDict).length;
+      document.getElementById('nav-count-badge').innerHTML = `👥 ${length} Students`;
+      document.getElementById('roster-count-badge').innerText = `Length: ${length} Students`;
+      document.getElementById('summary-length').innerText = `${length} Students`;
+
+      const emptyAlert = document.getElementById('empty-roster-alert');
+      if (length === 0) {
+        emptyAlert.style.display = 'block';
+      } else {
+        emptyAlert.style.display = 'none';
+      }
+    }
+
+    function updateNavbarAndHeader() {
+      if (!currentUser) return;
+      const classSec = currentUser.classSection || 'Class Attendance';
+      const dept = currentUser.deptName || 'Engineering Department';
+
+      document.getElementById('nav-dept-badge').innerText = classSec;
+      document.getElementById('dept-header-title').innerText = classSec;
+      document.getElementById('dept-header-sub').innerText = dept;
+      document.title = `${classSec} - Attendance Portal`;
+    }
+
+    // --- Excel / CSV Upload Parser ---
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const fileName = file.name.toLowerCase();
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        try {
+          let data = e.target.result;
+          let parsedStudents = {};
+
+          if (fileName.endsWith('.csv')) {
+            parsedStudents = parseCSV(data);
+          } else {
+            if (typeof XLSX === 'undefined') {
+              alert('Excel library not loaded. Please ensure you have internet access or upload a .csv file.');
+              return;
+            }
+            const workbook = XLSX.read(data, { type: 'binary' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            parsedStudents = extractStudentsFromRows(rows);
+          }
+
+          const count = Object.keys(parsedStudents).length;
+          if (count === 0) {
+            alert('Could not find valid student data in this file. Please verify it contains Roll Numbers and Student Names.');
+            return;
+          }
+
+          studentDict = parsedStudents;
+          saveStudentData();
+          renderRosterTable();
+
+          showToast(`✅ Successfully imported ${count} students! Total roll count updated to ${count}.`);
+          showTab('roster');
+        } catch (err) {
+          console.error('File parsing error:', err);
+          alert('Error reading file: ' + err.message);
+        }
+      };
+
+      if (fileName.endsWith('.csv')) {
+        reader.readAsText(file);
+      } else {
+        reader.readAsBinaryString(file);
+      }
+
+      event.target.value = '';
+    }
+
+    // Flexible row-to-dictionary extractor
+    function extractStudentsFromRows(rows) {
+      const dict = {};
+      if (!rows || rows.length === 0) return dict;
+
+      let rollColIdx = -1;
+      let nameColIdx = -1;
+      let startRow = 0;
+
+      for (let r = 0; r < Math.min(rows.length, 5); r++) {
+        const row = rows[r];
+        if (!Array.isArray(row)) continue;
+
+        for (let c = 0; c < row.length; c++) {
+          const val = String(row[c] || '').trim().toLowerCase();
+          if (rollColIdx === -1 && (val.includes('roll') || val.includes('reg') || val.includes('id') || val === 'r.no' || val === 's.no')) {
+            rollColIdx = c;
+          }
+          if (nameColIdx === -1 && (val.includes('name') || val.includes('student'))) {
+            nameColIdx = c;
+          }
+        }
+
+        if (rollColIdx !== -1 && nameColIdx !== -1) {
+          startRow = r + 1;
+          break;
+        }
+      }
+
+      if (rollColIdx === -1 || nameColIdx === -1) {
+        rollColIdx = 0;
+        nameColIdx = 1;
+        startRow = 0;
+      }
+
+      for (let i = startRow; i < rows.length; i++) {
+        const row = rows[i];
+        if (!Array.isArray(row) || row.length === 0) continue;
+
+        let roll = String(row[rollColIdx] || '').trim();
+        let name = String(row[nameColIdx] || '').trim();
+
+        if (!roll || !name) continue;
+        if (/roll|reg|name/i.test(roll) && /roll|reg|name/i.test(name)) continue;
+
+        dict[roll] = name.toUpperCase();
+      }
+
+      return dict;
+    }
+
+    // Pure JavaScript CSV Fallback Parser
+    function parseCSV(text) {
+      const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
+      const rows = lines.map(line => {
+        const matched = [];
+        let curr = '';
+        let insideQuote = false;
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          if (char === '"') {
+            insideQuote = !insideQuote;
+          } else if (char === ',' && !insideQuote) {
+            matched.push(curr.trim().replace(/^"|"$/g, ''));
+            curr = '';
+          } else {
+            curr += char;
+          }
+        }
+        matched.push(curr.trim().replace(/^"|"$/g, ''));
+        return matched;
+      });
+
+      return extractStudentsFromRows(rows);
+    }
+
+    // Drag & Drop Setup
+    const dropArea = document.getElementById('drop-area');
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropArea.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropArea.classList.remove('dragover');
+      }, false);
+    });
+
+    dropArea.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files.length > 0) {
+        handleFileUpload({ target: { files: files } });
+      }
+    });
+
+    // Sample Template Download
+    function downloadSampleTemplate(type) {
+      const sampleData = [
+        { "Roll No": "101", "Student Name": "STUDENT NAME 1" },
+        { "Roll No": "102", "Student Name": "STUDENT NAME 2" },
+        { "Roll No": "103", "Student Name": "STUDENT NAME 3" }
+      ];
+
+      if (type === 'xlsx' && typeof XLSX !== 'undefined') {
+        const ws = XLSX.utils.json_to_sheet(sampleData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Students");
+        XLSX.writeFile(wb, "College_Student_Roster_Template.xlsx");
+      } else {
+        const csvContent = "data:text/csv;charset=utf-8," +
+          "Roll No,Student Name\n" +
+          sampleData.map(e => `${e["Roll No"]},${e["Student Name"]}`).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "College_Student_Roster_Template.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      showToast('Downloaded clean student template!');
+    }
+
+    function clearRosterData() {
+      if (confirm('Are you sure you want to clear the student roster? You can upload a new Excel file anytime.')) {
+        studentDict = {};
+        saveStudentData();
+        renderRosterTable();
+        showToast('Student roster cleared.');
+      }
+    }
+
+    // --- Student Roster Table & CRUD ---
+    function renderRosterTable(filterText = '') {
+      const tbody = document.getElementById('roster-table-body');
+      tbody.innerHTML = '';
+
+      const keys = Object.keys(studentDict);
+      let index = 1;
+
+      keys.forEach(roll => {
+        const name = studentDict[roll];
+        if (filterText && !roll.toLowerCase().includes(filterText) && !name.toLowerCase().includes(filterText)) {
+          return;
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="color: var(--text-muted);">${index++}</td>
+          <td><strong style="color: var(--neon-cyan); font-size: 0.95rem;">${escapeHtml(roll)}</strong></td>
+          <td>${escapeHtml(name)}</td>
+          <td style="text-align: center; white-space: nowrap;">
+            <button class="action-edit-btn" onclick="openEditModal('${escapeAttr(roll)}')" title="Edit Student">
+              ✏️ Edit
+            </button>
+            <button class="action-del-btn" onclick="deleteStudent('${escapeAttr(roll)}')" title="Delete Student">
+              🗑️ Delete
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if (keys.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4">
+              <div class="empty-state">
+                <span class="empty-state-icon">📋</span>
+                <p><strong>No students in roster yet.</strong></p>
+                <p style="font-size: 0.82rem; margin-top: 4px;">Upload an Excel/CSV file above or add students manually.</p>
+              </div>
+            </td>
+          </tr>`;
+      } else if (tbody.children.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No students match your search.</td></tr>`;
+      }
+    }
+
+    function filterStudentTable() {
+      const query = document.getElementById('search-student').value.trim().toLowerCase();
+      renderRosterTable(query);
+    }
+
+    function addSingleStudent() {
+      const rollInput = document.getElementById('new-roll');
+      const nameInput = document.getElementById('new-name');
+      const roll = rollInput.value.trim();
+      const name = nameInput.value.trim().toUpperCase();
+
+      if (!roll || !name) {
+        alert('Please enter both Roll Number and Student Name.');
+        return;
+      }
+
+      studentDict[roll] = name;
+      saveStudentData();
+      renderRosterTable();
+
+      rollInput.value = '';
+      nameInput.value = '';
+      showToast(`Added ${roll} - ${name} to roster!`);
+    }
+
+    // --- Edit Student Modal Logic ---
+    function openEditModal(roll) {
+      const name = studentDict[roll];
+      if (!name) return;
+
+      document.getElementById('edit-original-roll').value = roll;
+      document.getElementById('edit-roll').value = roll;
+      document.getElementById('edit-name').value = name;
+      document.getElementById('edit-student-modal').style.display = 'flex';
+      document.getElementById('edit-name').focus();
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-student-modal').style.display = 'none';
+    }
+
+    function saveStudentEdit() {
+      const origRoll = document.getElementById('edit-original-roll').value;
+      const newRoll = document.getElementById('edit-roll').value.trim();
+      const newName = document.getElementById('edit-name').value.trim().toUpperCase();
+
+      if (!newRoll || !newName) {
+        alert('Please provide both Roll Number and Student Name.');
+        return;
+      }
+
+      if (origRoll !== newRoll) {
+        delete studentDict[origRoll];
+      }
+      studentDict[newRoll] = newName;
+
+      saveStudentData();
+      renderRosterTable();
+      closeEditModal();
+      showToast(`✅ Student ${newRoll} updated successfully!`);
+    }
+
+    function deleteStudent(roll) {
+      const name = studentDict[roll];
+      if (confirm(`Remove student ${roll} - ${name} from roster?`)) {
+        delete studentDict[roll];
+        saveStudentData();
+        renderRosterTable();
+        showToast(`Removed student ${roll}.`);
+      }
+    }
+
+    // --- Profile Management ---
+    function populateProfileForm() {
+      if (!currentUser) return;
+      document.getElementById('prof-dept').value = currentUser.deptName || '';
+
+      const parsed = parseClassDetails(currentUser.classSection);
+      document.getElementById('prof-year').value = currentUser.year || parsed.year;
+      document.getElementById('prof-dept-short').value = currentUser.deptShort || parsed.short;
+      document.getElementById('prof-section').value = currentUser.section || parsed.section;
+
+      updateClassPreview('prof');
+
+      document.getElementById('prof-faculty').value = currentUser.name || '';
+      document.getElementById('prof-email').value = currentUser.email || '';
+
+      document.getElementById('summary-class').innerText = currentUser.classSection || '-';
+    }
+
+    function handleSaveProfile(e) {
+      e.preventDefault();
+      if (!currentUser) return;
+
+      const dept = document.getElementById('prof-dept').value.trim();
+      const year = document.getElementById('prof-year').value;
+      const deptShort = document.getElementById('prof-dept-short').value.trim().toUpperCase();
+      const section = document.getElementById('prof-section').value;
+      const faculty = document.getElementById('prof-faculty').value.trim();
+      const newLoginId = document.getElementById('prof-email').value.trim();
+
+      if (!dept) {
+        alert('Branch / Department Name cannot be empty.');
+        return;
+      }
+
+      if (!newLoginId) {
+        alert('Login ID / Email cannot be empty.');
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem(STORAGE_USERS_KEY) || '[]');
+      const conflict = users.find(u => u.id !== currentUser.id && u.email.toLowerCase() === newLoginId.toLowerCase());
+      if (conflict) {
+        alert(`The Login ID "${newLoginId}" is already registered to another faculty account. Please choose a different one.`);
+        return;
+      }
+
+      const classSec = buildClassString(year, deptShort, section);
+
+      currentUser.deptName = dept;
+      currentUser.classSection = classSec;
+      currentUser.year = year;
+      currentUser.deptShort = deptShort;
+      currentUser.section = section;
+      currentUser.name = faculty;
+      currentUser.email = newLoginId;
+
+      const idx = users.findIndex(u => u.id === currentUser.id);
+      if (idx !== -1) {
+        users[idx] = currentUser;
+        localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(users));
+      }
+
+      updateNavbarAndHeader();
+      populateProfileForm();
+      showToast('✅ Profile, Class Details & Login ID updated successfully!');
+    }
+
+    // --- ATTENDANCE STORAGE (YEAR -> MONTH -> DAY -> FN/AN) ---
+    function getAttendanceStorage() {
+      if (!currentUser) return {};
+      const key = STORAGE_ATTENDANCE_PREFIX + currentUser.id;
+      try {
+        return JSON.parse(localStorage.getItem(key) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function setAttendanceStorage(store) {
+      if (!currentUser) return;
+      const key = STORAGE_ATTENDANCE_PREFIX + currentUser.id;
+      localStorage.setItem(key, JSON.stringify(store));
+    }
+
+    // Stores attendance record hierarchically. If same day (AN or FN) occurs, it is REPLACED!
+    function saveAttendanceRecord(record) {
+      if (!currentUser) return false;
+      const store = getAttendanceStorage();
+      const { year, month, day, session } = record;
+
+      if (!store[year]) store[year] = {};
+      if (!store[year][month]) store[year][month] = {};
+      if (!store[year][month][day]) store[year][month][day] = {};
+
+      const alreadyExisted = Boolean(store[year][month][day][session]);
+
+      // Overwrite/replace record for that session on that day
+      store[year][month][day][session] = record;
+      setAttendanceStorage(store);
+
+      return alreadyExisted;
+    }
+
+    function deleteAttendanceSession(year, month, day, session) {
+      if (!confirm(`Delete attendance record for ${day}/${month}/${year} (${session})?`)) return;
+      const store = getAttendanceStorage();
+      if (store[year] && store[year][month] && store[year][month][day]) {
+        delete store[year][month][day][session];
+        if (Object.keys(store[year][month][day]).length === 0) {
+          delete store[year][month][day];
+        }
+        if (Object.keys(store[year][month]).length === 0) {
+          delete store[year][month];
+        }
+        if (Object.keys(store[year]).length === 0) {
+          delete store[year];
+        }
+        setAttendanceStorage(store);
+        populateStorageDateOptions();
+        renderAttendanceStorage();
+        showToast(`Deleted ${session} record for ${day}/${month}/${year}.`);
+      }
+    }
+
+    function populateStorageYearOptions() {
+      const yearSelect = document.getElementById('storage-year-select');
+      const store = getAttendanceStorage();
+      const recordedYears = Object.keys(store);
+      const currentYear = String(new Date().getFullYear());
+
+      const allYears = Array.from(new Set([...recordedYears, currentYear])).sort().reverse();
+
+      const prevVal = yearSelect.value;
+      yearSelect.innerHTML = '';
+      allYears.forEach(y => {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.innerText = y;
+        yearSelect.appendChild(opt);
+      });
+
+      if (prevVal && allYears.includes(prevVal)) {
+        yearSelect.value = prevVal;
+      } else {
+        yearSelect.value = currentYear;
+      }
+
+      // Default month to current month if not set
+      const monthSelect = document.getElementById('storage-month-select');
+      if (!monthSelect.value) {
+        monthSelect.value = String(new Date().getMonth() + 1).padStart(2, '0');
+      }
+
+      populateStorageDateOptions();
+    }
+
+    function populateStorageDateOptions() {
+      const yearSelect = document.getElementById('storage-year-select');
+      const monthSelect = document.getElementById('storage-month-select');
+      const dateSelect = document.getElementById('storage-date-select');
+      if (!dateSelect) return;
+
+      const selectedYear = yearSelect.value;
+      const selectedMonth = monthSelect.value;
+      const store = getAttendanceStorage();
+      const monthData = (store[selectedYear] && store[selectedYear][selectedMonth]) ? store[selectedYear][selectedMonth] : {};
+      const recordedDays = Object.keys(monthData).sort((a, b) => parseInt(b) - parseInt(a));
+
+      const prevVal = dateSelect.value;
+      dateSelect.innerHTML = '<option value="all">All</option>';
+
+      recordedDays.forEach(day => {
+        const opt = document.createElement('option');
+        opt.value = day;
+        opt.innerText = day; // Only number in date of storage
+        dateSelect.appendChild(opt);
+      });
+
+      if (prevVal && (prevVal === 'all' || recordedDays.includes(prevVal))) {
+        dateSelect.value = prevVal;
+      } else {
+        dateSelect.value = 'all';
+      }
+    }
+
+    function handleStorageYearOrMonthChange() {
+      populateStorageDateOptions();
+      renderAttendanceStorage();
+    }
+
+    // Render Attendance Storage View
+    function renderAttendanceStorage() {
+      const yearSelect = document.getElementById('storage-year-select');
+      const monthSelect = document.getElementById('storage-month-select');
+      const dateSelect = document.getElementById('storage-date-select');
+      const container = document.getElementById('storage-days-list');
+
+      const selectedYear = yearSelect.value;
+      const selectedMonth = monthSelect.value;
+      const selectedDate = dateSelect ? dateSelect.value : 'all';
+
+      const store = getAttendanceStorage();
+      const monthData = (store[selectedYear] && store[selectedYear][selectedMonth]) ? store[selectedYear][selectedMonth] : {};
+
+      let days = Object.keys(monthData).sort((a, b) => parseInt(b) - parseInt(a)); // Latest day first
+      const totalMonthDays = days.length;
+
+      // Filter by selected date if not 'all'
+      if (selectedDate && selectedDate !== 'all') {
+        days = days.filter(d => d === selectedDate);
+      }
+
+      let totalSessions = 0;
+      container.innerHTML = '';
+
+      days.forEach(day => {
+        const dayRecord = monthData[day];
+        const fn = dayRecord['FN'];
+        const an = dayRecord['AN'];
+
+        if (fn) totalSessions++;
+        if (an) totalSessions++;
+
+        const card = document.createElement('div');
+        card.className = 'storage-day-card';
+
+        card.innerHTML = `
+          <div class="day-header">
+            <div>
+              <strong style="font-size: 1.05rem; color: #fff;">📅 Date: ${day}</strong>
+              <span style="font-size: 0.82rem; color: var(--neon-cyan); margin-left: 8px;">(${day}/${selectedMonth}/${selectedYear})</span>
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">
+              Class: <strong>${(fn && fn.classSection) || (an && an.classSection) || (currentUser && currentUser.classSection) || '-'}</strong>
+            </div>
+          </div>
+          <div class="sessions-grid">
+            <!-- FN Session -->
+            ${renderSessionBox(fn, 'FN', selectedYear, selectedMonth, day)}
+            <!-- AN Session -->
+            ${renderSessionBox(an, 'AN', selectedYear, selectedMonth, day)}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById('storage-days-count').innerText = `${selectedDate === 'all' ? totalMonthDays : days.length} Days Recorded`;
+      document.getElementById('storage-sessions-count').innerText = `${totalSessions} Sessions (FN/AN)`;
+
+      if (days.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <span class="empty-state-icon">📅</span>
+            <p><strong>No attendance records found for ${selectedDate !== 'all' ? selectedDate + '/' + selectedMonth + '/' + selectedYear : getMonthName(selectedMonth) + ' ' + selectedYear}.</strong></p>
+            <p style="font-size: 0.82rem; margin-top: 6px;">Take attendance in the "Attendance" tab to store records here.</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderSessionBox(sessionData, sessionType, year, month, day) {
+      const sessionLabel = sessionType === 'FN' ? '🌅 Forenoon (FN)' : '🌇 Afternoon (AN)';
+      if (!sessionData) {
+        return `
+          <div class="session-box">
+            <div class="session-title">
+              <span>${sessionLabel}</span>
+              <span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">Not Recorded</span>
+            </div>
+            <p style="font-size: 0.78rem; color: var(--text-muted); padding: 8px 0;">No ${sessionType} attendance logged for this day.</p>
+          </div>
+        `;
+      }
+
+      const pctColor = sessionData.percentage >= 75 ? 'var(--neon-green)' : 'var(--neon-amber)';
+      const absRolls = sessionData.absentees.map(a => a.roll).join(', ') || 'None';
+      const odRolls = sessionData.onDuty.map(o => o.roll).join(', ') || 'None';
+      const boxId = `report-box-${year}-${month}-${day}-${sessionType}`;
+      const btnId = `btn-report-${year}-${month}-${day}-${sessionType}`;
+
+      return `
+        <div class="session-box has-data">
+          <div class="session-title">
+            <span>${sessionLabel}</span>
+            <span class="badge" style="background: rgba(56,239,125,0.15); color: ${pctColor}; border: 1px solid rgba(56,239,125,0.3);">
+              ${sessionData.percentage}% Present
+            </span>
+          </div>
+          <div style="font-size: 0.82rem; line-height: 1.6; margin: 8px 0;">
+            <div>👥 Present: <strong style="color: var(--neon-green);">${sessionData.presentCount} / ${sessionData.totalStudents}</strong></div>
+            <div>🚫 Absentees (${sessionData.absCount}): <span style="color: var(--neon-pink); font-size: 0.78rem;">${absRolls}</span></div>
+            <div>⚡ On-Duty (${sessionData.odCount}): <span style="color: var(--neon-amber); font-size: 0.78rem;">${odRolls}</span></div>
+          </div>
+          <div style="display: flex; gap: 6px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
+            <button type="button" id="${btnId}" class="btn-primary btn-sm" style="flex:1; padding: 5px 8px; font-size: 0.72rem;" onclick="toggleInlineReport('${year}', '${month}', '${day}', '${sessionType}')">
+              📄 View Report
+            </button>
+            <button type="button" class="action-del-btn" style="padding: 5px 8px; font-size: 0.72rem;" onclick="deleteAttendanceSession('${year}', '${month}', '${day}', '${sessionType}')">
+              🗑️
+            </button>
+          </div>
+          <!-- Inline report container rendered right in the space (never navigates away to home page) -->
+          <div id="${boxId}" style="display: none; margin-top: 12px; padding: 12px; background: rgba(2, 6, 23, 0.92); border: 1px solid rgba(0, 242, 254, 0.35); border-radius: 10px; font-size: 0.78rem; font-family: 'Consolas', 'Menlo', monospace; line-height: 1.6; animation: fadeIn 0.2s ease;">
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleInlineReport(year, month, day, session) {
+      const boxId = `report-box-${year}-${month}-${day}-${session}`;
+      const btnId = `btn-report-${year}-${month}-${day}-${session}`;
+      const box = document.getElementById(boxId);
+      const btn = document.getElementById(btnId);
+      if (!box) return;
+
+      if (box.style.display === 'block') {
+        box.style.display = 'none';
+        if (btn) btn.innerHTML = '📄 View Report';
+        return;
+      }
+
+      const store = getAttendanceStorage();
+      const rec = store[year] && store[year][month] && store[year][month][day] && store[year][month][day][session];
+      if (!rec) return;
+
+      let absListHtml = '';
+      if (rec.absCount > 0 && rec.absentees && rec.absentees.length > 0) {
+        absListHtml = rec.absentees.map(a => `<div style="color: var(--neon-pink); padding: 3px 0;">• <strong>${escapeHtml(a.roll)}</strong> - ${escapeHtml(a.name)}</div>`).join('');
+      } else {
+        absListHtml = '<div style="color: var(--text-muted); font-size: 0.74rem;">None</div>';
+      }
+
+      let odListHtml = '';
+      if (rec.odCount > 0 && rec.onDuty && rec.onDuty.length > 0) {
+        odListHtml = rec.onDuty.map(o => `<div style="color: var(--neon-amber); padding: 3px 0;">• <strong>${escapeHtml(o.roll)}</strong> - ${escapeHtml(o.name)}</div>`).join('');
+      } else {
+        odListHtml = '<div style="color: var(--text-muted); font-size: 0.74rem;">None</div>';
+      }
+
+      const rawReport = formatReportFromRecord(rec);
+
+      box.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 8px;">
+          <div>
+            <strong style="color: #fff; font-size: 0.82rem;">📋 ${rec.displayDate} (${rec.session})</strong>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <button type="button" class="btn-secondary btn-sm" style="padding: 2px 8px; font-size: 0.68rem;" onclick="copySpecificReportText(\`${escapeAttr(rawReport)}\`)">📋 Copy</button>
+            <button type="button" class="action-del-btn" style="padding: 2px 6px; font-size: 0.68rem;" onclick="toggleInlineReport('${year}', '${month}', '${day}', '${session}')">✕</button>
+          </div>
+        </div>
+
+        <div style="font-size: 0.76rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 8px;">
+          <div>Class: <strong>${rec.classSection}</strong></div>
+          <div>Present: <strong style="color: var(--neon-green);">${rec.presentCount} / ${rec.totalStudents}</strong> (${rec.percentage}%)</div>
+        </div>
+
+        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.08);">
+          <strong style="color: var(--neon-pink); display: block; margin-bottom: 3px;">🚫 ABSENTEES (${rec.absCount}):</strong>
+          <div style="max-height: 110px; overflow-y: auto; padding-left: 2px;">
+            ${absListHtml}
+          </div>
+        </div>
+
+        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.08);">
+          <strong style="color: var(--neon-amber); display: block; margin-bottom: 3px;">⚡ ON-DUTY STUDENTS (${rec.odCount}):</strong>
+          <div style="max-height: 110px; overflow-y: auto; padding-left: 2px;">
+            ${odListHtml}
+          </div>
+        </div>
+      `;
+
+      box.style.display = 'block';
+      if (btn) btn.innerHTML = '▲ Hide Report';
+    }
+
+    function copySpecificReportText(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast("📋 Attendance Report Copied to Clipboard!");
+        }).catch(() => fallbackCopyText(text));
+      } else {
+        fallbackCopyText(text);
+      }
+    }
+
+    function formatReportFromRecord(rec) {
+      let lines = [];
+      lines.push(`${rec.displayDate} (${rec.session})`);
+      lines.push(`${rec.classSection}`);
+      lines.push(`TOTAL STUDENTS ON-ROLL: ${rec.totalStudents}`);
+      lines.push(`TODAY'S NUMBER OF PHYSICAL PRESENT: ${rec.presentCount}`);
+      lines.push(`NUMBER OF STUDENTS WITH PERMITTED ON-DUTY: ${rec.odCount}`);
+      lines.push(`ATTENDANCE PERCENTAGE: ${rec.percentage}%\n`);
+
+      lines.push(`ABSENTEES (${rec.absCount}) :`);
+      if (rec.absCount > 0) {
+        rec.absentees.forEach(a => lines.push(`${a.roll} - ${a.name}`));
+      }
+      lines.push(`\nON-DUTY STUDENTS (${rec.odCount}) :`);
+      if (rec.odCount > 0) {
+        rec.onDuty.forEach(o => lines.push(`${o.roll} - ${o.name}`));
+      }
+
+      return lines.join('\n');
+    }
+
+    function getMonthName(m) {
+      const names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      return names[parseInt(m, 10) - 1] || m;
+    }
+
+    // Export Monthly Attendance
+    function exportMonthlyAttendance(format) {
+      const year = document.getElementById('storage-year-select').value;
+      const month = document.getElementById('storage-month-select').value;
+
+      const store = getAttendanceStorage();
+      const monthData = (store[year] && store[year][month]) || {};
+
+      const days = Object.keys(monthData).sort((a, b) => parseInt(a) - parseInt(b));
+      if (days.length === 0) {
+        alert(`No records found for ${getMonthName(month)} ${year} to export.`);
+        return;
+      }
+
+      const rows = [];
+      days.forEach(day => {
+        ['FN', 'AN'].forEach(sess => {
+          const rec = monthData[day][sess];
+          if (rec) {
+            rows.push({
+              "Date": rec.displayDate,
+              "Day": day,
+              "Month": getMonthName(month),
+              "Year": year,
+              "Session": rec.session,
+              "Class": rec.classSection,
+              "Department": rec.deptName,
+              "Total Roll": rec.totalStudents,
+              "Physical Present": rec.presentCount,
+              "Absentees Count": rec.absCount,
+              "Absentees List": rec.absentees.map(a => `${a.roll}-${a.name}`).join('; '),
+              "On-Duty Count": rec.odCount,
+              "On-Duty List": rec.onDuty.map(o => `${o.roll}-${o.name}`).join('; '),
+              "Attendance %": `${rec.percentage}%`
+            });
+          }
+        });
+      });
+
+      const fileName = `Attendance_Register_${(currentUser && currentUser.classSection.replace(/\s+/g, '_')) || 'Class'}_${getMonthName(month)}_${year}`;
+
+      if (format === 'xlsx' && typeof XLSX !== 'undefined') {
+        const ws = XLSX.utils.json_to_sheet(rows);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Attendance_Register");
+        XLSX.writeFile(wb, `${fileName}.xlsx`);
+      } else {
+        const headers = Object.keys(rows[0]);
+        const csvContent = "data:text/csv;charset=utf-8," +
+          headers.join(",") + "\n" +
+          rows.map(r => headers.map(h => `"${String(r[h] || '').replace(/"/g, '""')}"`).join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `${fileName}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      showToast(`📊 Exported monthly attendance register!`);
+    }
+
+    // --- Attendance Calculation & Generation Logic ---
+    let absInput = document.getElementById("abs");
+    let odInput = document.getElementById("od");
+    let reportCard = document.getElementById("paa");
+
+    function parseRollNumbers(str) {
+      if (!str || !str.trim()) return [];
+      return str.split(',')
+        .map(item => item.trim())
+        .filter(item => item.length > 0);
+    }
+
+    function updateLiveInputHints() {
+      const arrab = parseRollNumbers(absInput.value);
+      const arrod = parseRollNumbers(odInput.value);
+
+      document.getElementById('abs-count-hint').innerText = `${arrab.length} selected`;
+      document.getElementById('od-count-hint').innerText = `${arrod.length} selected`;
+    }
+
+    function clickk() {
+      const totalStudents = Object.keys(studentDict).length;
+
+      if (totalStudents === 0) {
+        alert('Your student roster is currently empty. Please upload an Excel/CSV file or add students in the "Student Roster & Upload" tab first!');
+        showTab('roster');
+        return;
+      }
+
+      // Automatically capture current date, time and session
+      const { yyyy, mm, dd, dateVal, fd, timeStr, session } = getCurrentAttendanceDateTime();
+
+      let arrab = parseRollNumbers(absInput.value);
+      let arrod = parseRollNumbers(odInput.value);
+
+      let lab = arrab.length;
+      let lod = arrod.length;
+
+      let pr = totalStudents - lab - lod;
+      if (pr < 0) pr = 0;
+      let pc = (pr / totalStudents) * 100;
+      let npc = Math.round(pc);
+
+      let result = arrab.map(key => studentDict[key] || "Unknown");
+      let resod = arrod.map(key => studentDict[key] || "Unknown");
+
+      const classHeading = (currentUser && currentUser.classSection) ? currentUser.classSection : 'Class Attendance';
+
+      // 1. Reveal and Populate Stats Grid BELOW the form box
+      const statsOverview = document.getElementById("stats-overview");
+      statsOverview.style.display = "grid";
+
+      document.getElementById('stat-total').innerText = totalStudents;
+      document.getElementById('stat-present').innerText = pr;
+
+      // Absent and OD count as 0 if 0 or null
+      document.getElementById('stat-absent').innerText = lab;
+      document.getElementById('stat-od').innerText = lod;
+      document.getElementById('stat-pct').innerText = `${npc}%`;
+
+      // 2. Populate and Reveal Report Card Below Stats Grid
+      reportCard.style.display = "block";
+      reportCard.innerHTML = "";
+
+      let reportHtml = '';
+      reportHtml += `${fd} (${session})<br>`;
+      reportHtml += `${classHeading}<br>`;
+      reportHtml += `TOTAL STUDENTS ON-ROLL: ${totalStudents}<br>`;
+      reportHtml += `TODAY'S NUMBER OF PHYSICAL PRESENT: ${pr}<br>`;
+      reportHtml += `NUMBER OF STUDENTS WITH PERMITTED ON-DUTY: ${lod}<br>`;
+      reportHtml += `ATTENDANCE PERCENTAGE: ${npc}%<br><br>`;
+
+      // If no absentees, the list is blank
+      reportHtml += `<b>ABSENTEES (${lab}) :</b><br>`;
+      if (lab !== 0) {
+        for (let i in arrab) {
+          let s = `${arrab[i]} - ${result[i]}`;
+          reportHtml += `${s}<br>`;
+        }
+      }
+
+      // If no on-duty students, the list is blank
+      reportHtml += `<br><b>ON-DUTY STUDENTS (${lod}) :</b><br>`;
+      if (lod !== 0) {
+        for (let i in arrod) {
+          let s = `${arrod[i]} - ${resod[i]}`;
+          reportHtml += `${s}<br>`;
+        }
+      }
+
+      reportCard.innerHTML = reportHtml;
+      statsOverview.scrollIntoView({ behavior: 'smooth' });
+
+      // 3. Save into hierarchical storage (Year -> Month -> Day -> FN/AN). Replaces if same session occurs.
+      const record = {
+        date: dateVal,
+        displayDate: fd,
+        time: timeStr,
+        session: session,
+        year: yyyy,
+        month: mm,
+        day: dd,
+        classSection: classHeading,
+        deptName: (currentUser && currentUser.deptName) || '',
+        totalStudents: totalStudents,
+        presentCount: pr,
+        absCount: lab,
+        odCount: lod,
+        percentage: npc,
+        absentees: arrab.map((r, i) => ({ roll: r, name: result[i] })),
+        onDuty: arrod.map((r, i) => ({ roll: r, name: resod[i] })),
+        savedAt: new Date().toISOString()
+      };
+
+      const replaced = saveAttendanceRecord(record);
+      if (replaced) {
+        showToast(`ℹ️ Updated & replaced ${fd} (${session}) in Attendance Storage!`);
+      } else {
+        showToast(`✅ Saved ${fd} (${session}) to Attendance Storage!`);
+      }
+    }
+
+    function saveCurrentAttendanceManual() {
+      clickk();
+    }
+
+    function resetForm() {
+      absInput.value = '';
+      odInput.value = '';
+      document.getElementById('abs-count-hint').innerText = '0 selected';
+      document.getElementById('od-count-hint').innerText = '0 selected';
+      sessionOverride = null;
+      updateLiveDateTimeDisplay();
+
+      // Hide stats cards and report below the box
+      document.getElementById("stats-overview").style.display = 'none';
+      reportCard.style.display = 'none';
+      reportCard.innerHTML = '';
+    }
+
+    function copyt() {
+      if (reportCard.style.display === "none" || !reportCard.innerText) {
+        alert("Please click 'GET RESULT' first!");
+        return;
+      }
+
+      const t = reportCard.innerText;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(t).then(() => {
+          showToast("📋 Attendance Report Copied to Clipboard!");
+        }).catch(err => {
+          fallbackCopyText(t);
+        });
+      } else {
+        fallbackCopyText(t);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showToast("📋 Attendance Report Copied!");
+      } catch (err) {
+        alert("Failed to copy text");
+      }
+      document.body.removeChild(textArea);
+    }
+
+    function downloadReportTxt() {
+      if (reportCard.style.display === "none" || !reportCard.innerText) {
+        alert("Please click 'GET RESULT' first!");
+        return;
+      }
+      const t = reportCard.innerText;
+      const blob = new Blob([t], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const { dateVal, session } = getCurrentAttendanceDateTime();
+      link.download = `Attendance_Report_${currentUser ? currentUser.classSection.replace(/\s+/g, '_') : 'Class'}_${dateVal}_${session}.txt`;
+      link.click();
+      URL.revokeObjectURL(url);
+      showToast("💾 Saved report as text file!");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3500);
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+
+    function escapeAttr(str) {
+      return String(str).replace(/'/g, "\\'");
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+      const modal = document.getElementById('edit-student-modal');
+      if (e.target === modal) {
+        closeEditModal();
+      }
+    });
+
+    // Start App
+    window.addEventListener('DOMContentLoaded', initStorage);
+  </script>
+</body>
+</html>
