@@ -465,8 +465,140 @@ assert.strictEqual(runResult.present, 2);
 assert.strictEqual(runResult.percentage, 67);
 assert.ok(mockStorage["2026"]["09"]["11"]["FN"], "Record must be automatically saved in storage on GET RESULT");
 assert.strictEqual(mockStorage["2026"]["09"]["11"]["FN"].presentCount, 2);
-console.log("  [PASS] GET RESULT workflow successfully calculates attendance AND saves directly to storage");
+console.log("  [PASS] GET RESULT workflow successfully calculates attendance AND saves directly to storage\n");
+
+// =================================================================
+// 4. VERIFY MOBILE NUMBER ROSTER & ABSENT MESSAGING LOGIC
+// =================================================================
+console.log("--- 4. Testing Mobile Number Roster & Absent Messaging Logic ---");
+
+function extractStudentsFromRowsTest(rows) {
+  const dict = {};
+  if (!rows || rows.length === 0) return dict;
+
+  let rollColIdx = -1;
+  let nameColIdx = -1;
+  let mobileColIdx = -1;
+  let startRow = 0;
+
+  for (let r = 0; r < Math.min(rows.length, 5); r++) {
+    const row = rows[r];
+    if (!Array.isArray(row)) continue;
+
+    for (let c = 0; c < row.length; c++) {
+      const val = String(row[c] || '').trim().toLowerCase();
+      if (rollColIdx === -1 && (val.includes('roll') || val.includes('reg') || val.includes('register') || val === 'r.no')) {
+        rollColIdx = c;
+      }
+      if (nameColIdx === -1 && (val.includes('name') || val.includes('student'))) {
+        nameColIdx = c;
+      }
+      if (mobileColIdx === -1 && (val.includes('mobile') || val.includes('phone') || val.includes('contact') || val.includes('cell') || val.includes('number'))) {
+        mobileColIdx = c;
+      }
+    }
+
+    if (rollColIdx !== -1 && nameColIdx !== -1) {
+      startRow = r + 1;
+      break;
+    }
+  }
+
+  if (rollColIdx === -1 || nameColIdx === -1) {
+    rollColIdx = 0;
+    nameColIdx = 1;
+    if (rows[0] && rows[0].length >= 3) mobileColIdx = 2;
+    startRow = 0;
+  }
+
+  for (let i = startRow; i < rows.length; i++) {
+    const row = rows[i];
+    if (!Array.isArray(row) || row.length === 0) continue;
+
+    let roll = String(row[rollColIdx] || '').trim();
+    let name = String(row[nameColIdx] || '').trim();
+    let mobile = mobileColIdx !== -1 ? String(row[mobileColIdx] || '').trim() : '';
+
+    if (!roll || !name) continue;
+    if (/roll|reg|name/i.test(roll) && /roll|reg|name/i.test(name)) continue;
+
+    dict[roll] = {
+      name: name.toUpperCase(),
+      mobile: mobile
+    };
+  }
+
+  return dict;
+}
+
+function getStudentObjTest(dict, roll) {
+  const entry = dict[roll];
+  if (!entry) return { name: 'Unknown', mobile: '' };
+  if (typeof entry === 'string') return { name: entry, mobile: '' };
+  return { name: entry.name || 'Unknown', mobile: entry.mobile || '' };
+}
+
+function getDayNameTest(dateValStr) {
+  if (!dateValStr) return '';
+  const [y, m, d] = dateValStr.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  return days[dt.getDay()] || '';
+}
+
+function generateAbsentStudentMessageTest(dayName, displayDate, session) {
+  return `you are marked as absent in the ${dayName}, ${displayDate}, ${session}`;
+}
+
+// TEST 4.1: Row extraction with Mobile Number column
+const testSheet = [
+  ["Roll No", "Student Name", "Mobile Number"],
+  ["101", "ALICE SMITH", "9876543210"],
+  ["102", "BOB JONES", "9876543211"]
+];
+const extractedDict = extractStudentsFromRowsTest(testSheet);
+assert.strictEqual(extractedDict["101"].name, "ALICE SMITH");
+assert.strictEqual(extractedDict["101"].mobile, "9876543210");
+assert.strictEqual(extractedDict["102"].mobile, "9876543211");
+console.log("  [PASS] Sheet extraction identifies Mobile Number column accurately");
+
+// TEST 4.2: Normalization helper for legacy string entries vs new object entries
+const legacyDict = { "101": "ALICE SMITH", "102": { name: "BOB JONES", mobile: "9876543211" } };
+assert.strictEqual(getStudentObjTest(legacyDict, "101").name, "ALICE SMITH");
+assert.strictEqual(getStudentObjTest(legacyDict, "101").mobile, "");
+assert.strictEqual(getStudentObjTest(legacyDict, "102").name, "BOB JONES");
+assert.strictEqual(getStudentObjTest(legacyDict, "102").mobile, "9876543211");
+console.log("  [PASS] Legacy string roster items correctly normalized alongside mobile object items");
+
+// TEST 4.3: Day name detection and absent student notification message text format
+const dayName = getDayNameTest("2026-09-11"); // 11th Sept 2026 is a Friday
+assert.strictEqual(dayName, "Friday");
+const absentMsg = generateAbsentStudentMessageTest("Friday", "11/09/2026", "FN");
+assert.strictEqual(absentMsg, "you are marked as absent in the Friday, 11/09/2026, FN");
+console.log("  [PASS] Absent notification message generated exactly as required: 'you are marked as absent in the Friday, 11/09/2026, FN'");
+
+// TEST 4.4: Attendance storage record preserves mobile numbers in absentees list
+const recordWithMobile = {
+  date: "2026-09-11",
+  displayDate: "11/09/2026",
+  session: "FN",
+  year: "2026",
+  month: "09",
+  day: "11",
+  classSection: "III CSE - A",
+  totalStudents: 50,
+  presentCount: 49,
+  absCount: 1,
+  odCount: 0,
+  percentage: 98,
+  absentees: [{ roll: "101", name: "ALICE SMITH", mobile: "9876543210" }],
+  onDuty: []
+};
+saveAttendanceRecord(mockStorage, recordWithMobile);
+assert.strictEqual(mockStorage["2026"]["09"]["11"]["FN"].absentees[0].mobile, "9876543210");
+console.log("  [PASS] Attendance storage preserves mobile numbers for absent students");
 
 console.log("\n=================================================================");
 console.log("        ALL AUTOMATED DATE, TIME & STORAGE TESTS PASSED!         ");
 console.log("=================================================================");
+

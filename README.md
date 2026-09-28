@@ -35,15 +35,21 @@ A secure, multi-department web application for college faculty to manage student
    - In **Profile Settings**, the **Faculty Email / Login ID** is now fully editable.
    - Saves updates directly to your profile with duplicate conflict protection.
 
-4. **📊 Excel & CSV Student Roster Upload & Edit**
+4. **📊 Excel & CSV Student Roster Upload & Edit with Mobile Numbers**
    - Drag and drop `.xlsx`, `.xls`, or `.csv` class roster files.
-   - Stores students as a key-value dictionary `{ [rollNo]: studentName }`.
-   - **✏️ Edit Student**: Modify any student's roll number or name directly with the interactive edit modal.
+   - Stores students with Roll Number, Name, and **Mobile Number** (`{ [rollNo]: { name, mobile } }`).
+   - **✏️ Edit Student**: Modify student roll number, name, or mobile number directly with the interactive edit modal.
    - **🗑️ Delete Student**: Remove students individually.
-   - **➕ Add Student**: Add lateral or transfer students anytime.
-   - **📥 Download Template**: Clean `.xlsx` and `.csv` templates.
+   - **➕ Add Student**: Add new or transfer students manually with Mobile Number.
+   - **📥 Download Template**: Clean `.xlsx` and `.csv` templates pre-configured with Mobile Number fields.
 
-5. **📅 Hierarchical Attendance Storage & Replacement System**
+5. **📱 Automated Absent Student Messaging & Instant Dispatch**
+   - When attendance is calculated, absent students automatically receive/generate formatted notification messages: `"you are marked as absent in the [day], [date], [session]"` (e.g. `"you are marked as absent in the Friday, 11/09/2026, FN"`).
+   - **💬 WhatsApp Integration**: One-click direct link to message absent students via WhatsApp.
+   - **📱 SMS Link**: Direct cellular SMS deep link.
+   - **📋 One-Click Copy & Batch Copy**: Copy individual absent student messages or all absent messages at once for instant dispatch.
+
+6. **📅 Hierarchical Attendance Storage & Replacement System**
    - **Daily Sessions**: Track both **Forenoon (FN)** and **Afternoon (AN)** attendance sessions.
    - **Data Hierarchy**: Organizes records strictly by **Year $\rightarrow$ Month $\rightarrow$ Day $\rightarrow$ Session (FN/AN)**:
      ```json
@@ -53,12 +59,12 @@ A secure, multi-department web application for college faculty to manage student
    - **Automatic Replacement Rule**: If attendance is logged again for the same day and session (`FN` or `AN`), it **replaces/overwrites** the existing entry while preserving the other session.
    - **Monthly Register & Report Viewer**:
      - Filter and browse stored records by Year and Month.
-     - View side-by-side cards for Forenoon and Afternoon sessions showing Present count, Attendance %, Absentees, and On-Duty students.
+     - View side-by-side cards for Forenoon and Afternoon sessions showing Present count, Attendance %, Absentees with Mobile Numbers and Absent Messages, and On-Duty students.
      - Click **"📄 View Report"** to load the complete historical report and stats cards.
    - **📊 Monthly Export**:
-     - Export entire monthly attendance registers as **Excel (.xlsx)** or **CSV** spreadsheets with comprehensive student and session details.
+     - Export entire monthly attendance registers as **Excel (.xlsx)** or **CSV** spreadsheets with comprehensive student, mobile, and session details.
 
-6. **📏 Dynamic Length & Attendance Calculations**
+7. **📏 Dynamic Length & Attendance Calculations**
    - Automatically computes total students dynamically: `Object.keys(studentDict).length`.
    - Computes physical present, absentees, on-duty, and attendance percentages.
    - Five overview stat cards positioned **below the input box** and revealed only on **GET RESULT**.

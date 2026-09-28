@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>College Attendance Portal - Faculty Management</title>
+  <!-- Embedded Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
   <!-- Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,20 +16,61 @@
 
   <style>
     :root {
-      --neon-cyan: #00f2fe;
-      --neon-blue: #0072ff;
-      --neon-purple: #9d4edd;
-      --neon-pink: #ff007f;
-      --neon-green: #38ef7d;
-      --neon-amber: #f59e0b;
-      --neon-red: #ef4444;
-      --glass-bg: rgba(18, 24, 38, 0.85);
-      --glass-card: rgba(22, 30, 48, 0.75);
-      --glass-border: rgba(255, 255, 255, 0.12);
-      --glass-border-glow: rgba(0, 242, 254, 0.35);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-light: rgba(99, 102, 241, 0.16);
+      --primary-border: rgba(99, 102, 241, 0.35);
+
+      --success: #10b981;
+      --success-hover: #059669;
+      --success-light: rgba(16, 185, 129, 0.16);
+
+      --purple: #a855f7;
+      --purple-hover: #9333ea;
+      --purple-light: rgba(168, 85, 247, 0.16);
+
+      --amber: #f59e0b;
+      --amber-light: rgba(245, 158, 11, 0.16);
+
+      --danger: #f43f5e;
+      --danger-hover: #e11d48;
+      --danger-light: rgba(244, 63, 94, 0.16);
+
+      --surface: rgba(15, 23, 42, 0.65);
+      --surface-hover: rgba(23, 32, 54, 0.75);
+      --bg-canvas: #090d16;
+
+      --border-color: rgba(255, 255, 255, 0.14);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-dark: rgba(255, 255, 255, 0.25);
+      --glass-highlight: rgba(255, 255, 255, 0.22);
+
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --bg-dark: #020617;
+      --text-soft: #cbd5e1;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --radius-xl: 28px;
+
+      --shadow-xs: 0 2px 4px rgba(0, 0, 0, 0.2);
+      --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(99, 102, 241, 0.12);
+      --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 45px rgba(99, 102, 241, 0.2);
+
+      --neon-cyan: #38bdf8;
+      --neon-blue: #60a5fa;
+      --neon-purple: #c084fc;
+      --neon-pink: #f43f5e;
+      --neon-green: #34d399;
+      --neon-amber: #fbbf24;
+      --neon-red: #fb7185;
+      --bg-dark: #090d16;
+
+      --liquid-spring: cubic-bezier(0.16, 1, 0.3, 1);
+      --liquid-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --spatial-ease: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     * {
@@ -37,36 +80,127 @@
     }
 
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: radial-gradient(circle at 15% 15%, #231138 0%, #0a0f24 45%, #020617 100%);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #090d16;
+      background-image: 
+        radial-gradient(at 15% 15%, rgba(99, 102, 241, 0.2) 0px, transparent 50%),
+        radial-gradient(at 85% 25%, rgba(168, 85, 247, 0.2) 0px, transparent 50%),
+        radial-gradient(at 50% 80%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+      background-attachment: fixed;
       min-height: 100vh;
       color: var(--text-main);
-      padding: 0 0 40px 0;
+      padding: 0 0 60px 0;
       overflow-x: hidden;
+      position: relative;
     }
 
-    /* Top Navigation Bar */
+    /* Floating Liquid Ambient Background Glass Orbs */
+    .glass-orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.75;
+      mix-blend-mode: screen;
+      filter: blur(75px);
+      will-change: transform;
+      display: block !important;
+    }
+
+    .glass-orb-1 {
+      width: 540px;
+      height: 540px;
+      top: -120px;
+      left: -120px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.65) 0%, rgba(56, 189, 248, 0.35) 60%, transparent 80%);
+      animation: floatOrb1 18s ease-in-out infinite alternate;
+    }
+
+    .glass-orb-2 {
+      width: 600px;
+      height: 600px;
+      top: 18%;
+      right: -160px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.6) 0%, rgba(236, 72, 153, 0.35) 60%, transparent 80%);
+      animation: floatOrb2 22s ease-in-out infinite alternate;
+    }
+
+    .glass-orb-3 {
+      width: 500px;
+      height: 500px;
+      bottom: 5%;
+      left: 8%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.5) 0%, rgba(52, 211, 153, 0.25) 60%, transparent 80%);
+      animation: floatOrb3 20s ease-in-out infinite alternate;
+    }
+
+    .glass-orb-4 {
+      width: 440px;
+      height: 440px;
+      bottom: -90px;
+      right: 12%;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.45) 0%, rgba(244, 63, 94, 0.25) 60%, transparent 80%);
+      animation: floatOrb4 25s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatOrb1 {
+      0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      50% { transform: translate(70px, 90px) scale(1.15) rotate(90deg); }
+      100% { transform: translate(-50px, 40px) scale(0.9) rotate(180deg); }
+    }
+
+    @keyframes floatOrb2 {
+      0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      50% { transform: translate(-90px, 70px) scale(1.1) rotate(-120deg); }
+      100% { transform: translate(60px, -60px) scale(0.95) rotate(-240deg); }
+    }
+
+    @keyframes floatOrb3 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(80px, -70px) scale(1.2); }
+      100% { transform: translate(-60px, 35px) scale(0.85); }
+    }
+
+    @keyframes floatOrb4 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-70px, -90px) scale(1.12); }
+      100% { transform: translate(50px, 50px) scale(0.92); }
+    }
+
+    /* Top Sticky Navigation Bar */
     .navbar {
       display: none; /* Shown when logged in */
-      background: rgba(10, 15, 30, 0.92);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border-bottom: 1px solid var(--glass-border);
-      padding: 14px 24px;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(28px) saturate(200%);
+      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
       position: sticky;
       top: 0;
-      z-index: 100;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+      width: 100%;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45), inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+      transition: all 0.3s var(--liquid-spring);
     }
 
     .nav-container {
-      max-width: 1150px;
+      max-width: 1240px;
       margin: 0 auto;
+      padding: 0 24px;
+      height: 68px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      flex-wrap: wrap;
+    }
+
+    .nav-brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
     }
 
     .brand {
@@ -74,147 +208,236 @@
       align-items: center;
       gap: 10px;
       font-weight: 800;
-      font-size: 1.15rem;
-      letter-spacing: 1px;
-      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+      font-size: 1.08rem;
+      letter-spacing: 0.2px;
+      color: #ffffff;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    }
+
+    .brand:hover {
+      color: var(--neon-cyan);
+      transform: scale(1.02);
+    }
+
+    .brand-icon {
+      font-size: 1.35rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.6));
+    }
+
+    .brand-text {
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #ffffff 30%, #38bdf8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-decoration: none;
-      filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.35));
     }
 
     .nav-badges {
       display: flex;
       align-items: center;
       gap: 8px;
-      flex-wrap: wrap;
     }
 
     .badge {
-      font-size: 0.75rem;
+      font-size: 0.76rem;
       font-weight: 700;
       padding: 5px 12px;
-      border-radius: 20px;
-      letter-spacing: 0.5px;
+      border-radius: 9999px;
+      letter-spacing: 0.3px;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
+      line-height: 1.3;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      transition: all 0.25s var(--liquid-spring);
     }
 
-    .badge-cyan {
-      background: rgba(0, 242, 254, 0.12);
-      color: var(--neon-cyan);
-      border: 1px solid rgba(0, 242, 254, 0.3);
+    .badge:hover {
+      transform: translateY(-1px) scale(1.04);
     }
 
     .badge-purple {
-      background: rgba(157, 78, 221, 0.15);
-      color: #c77dff;
-      border: 1px solid rgba(157, 78, 221, 0.35);
+      background: rgba(168, 85, 247, 0.2);
+      color: var(--neon-purple);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.25);
+    }
+
+    .badge-cyan {
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--neon-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
     }
 
     .badge-green {
-      background: rgba(56, 239, 125, 0.15);
+      background: rgba(52, 211, 153, 0.2);
       color: var(--neon-green);
-      border: 1px solid rgba(56, 239, 125, 0.3);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      box-shadow: 0 0 15px rgba(52, 211, 153, 0.25);
     }
 
     .badge-amber {
-      background: rgba(245, 158, 11, 0.15);
+      background: rgba(251, 191, 36, 0.2);
       color: var(--neon-amber);
-      border: 1px solid rgba(245, 158, 11, 0.3);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.25);
     }
 
+    /* Segmented Navigation Tabs */
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 5px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      gap: 4px;
       list-style: none;
-      flex-wrap: wrap;
+      flex-shrink: 0;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
     }
 
     .nav-tab-btn {
       background: transparent;
       color: var(--text-muted);
-      border: 1px solid transparent;
-      padding: 8px 15px;
-      border-radius: 10px;
-      font-size: 0.86rem;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 12px;
+      font-size: 0.88rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s var(--liquid-bounce);
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      white-space: nowrap;
+      text-decoration: none;
+      position: relative;
     }
 
     .nav-tab-btn:hover {
-      color: var(--text-main);
-      background: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-1px);
     }
 
     .nav-tab-btn.active {
       color: #ffffff;
-      background: linear-gradient(135deg, rgba(0, 198, 255, 0.25), rgba(0, 114, 255, 0.25));
-      border-color: rgba(0, 242, 254, 0.4);
-      box-shadow: 0 0 12px rgba(0, 242, 254, 0.2);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(168, 85, 247, 0.9) 100%);
+      font-weight: 700;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    /* Right Action Button */
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
     }
 
     .btn-logout {
-      background: rgba(239, 68, 68, 0.12);
-      color: #fca5a5;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      padding: 8px 14px;
-      border-radius: 10px;
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--neon-pink);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
       font-size: 0.85rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.25s var(--liquid-bounce);
+      box-shadow: 0 4px 15px rgba(244, 63, 94, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
 
     .btn-logout:hover {
-      background: rgba(239, 68, 68, 0.25);
-      color: #fff;
+      background: rgba(244, 63, 94, 0.3);
+      color: #ffffff;
+      border-color: rgba(244, 63, 94, 0.6);
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 8px 25px rgba(244, 63, 94, 0.4);
     }
 
-    /* Main Content Container */
+    /* Main Container Canvas */
     .app-container {
-      max-width: 860px;
-      margin: 32px auto 0;
+      max-width: 940px;
+      margin: 36px auto 0;
       padding: 0 20px;
+      position: relative;
+      z-index: 10;
+      animation: cardFadeIn 0.4s var(--liquid-spring);
     }
 
-    /* Glassmorphism Card Style */
+    @keyframes cardFadeIn {
+      0% { opacity: 0; transform: translateY(20px) scale(0.98); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Pro Liquid Glass Card Design */
     .glass-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      padding: 32px 28px;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+      backdrop-filter: blur(28px) saturate(190%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: var(--radius-lg);
+      padding: 36px 36px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
       margin-bottom: 24px;
       position: relative;
+      overflow: hidden;
+      transition: transform 0.35s var(--liquid-spring), box-shadow 0.35s var(--liquid-spring), border-color 0.35s ease;
     }
 
-    /* Headings */
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.55), 0 0 35px rgba(99, 102, 241, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      transform: translateY(-3px) scale(1.002);
+    }
+
     h1 {
-      font-size: 2.2rem;
+      font-size: 2.1rem;
       font-weight: 800;
-      letter-spacing: 1.5px;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      text-align: center;
       margin-bottom: 8px;
-      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+      line-height: 1.25;
+      background: linear-gradient(135deg, #ffffff 30%, #38bdf8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-align: center;
-      filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.3));
+      text-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
     }
 
     .subtitle {
       font-size: 0.95rem;
       color: var(--text-muted);
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
+      font-weight: 500;
     }
 
     /* Form & Input Groups */
@@ -222,24 +445,24 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
       text-align: left;
     }
 
     .input-group label {
       font-size: 0.85rem;
       font-weight: 700;
-      color: #e2e8f0;
-      letter-spacing: 0.8px;
+      color: #cbd5e1;
+      letter-spacing: 0.4px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .input-group label .label-hint {
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       color: var(--neon-cyan);
-      font-weight: 500;
+      font-weight: 600;
     }
 
     input[type="text"],
@@ -249,15 +472,22 @@
     select {
       width: 100%;
       box-sizing: border-box;
-      border: 1px solid var(--glass-border);
-      background-color: rgba(15, 23, 42, 0.85);
-      border-radius: 12px;
-      padding: 13px 18px;
-      font-size: 0.98rem;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      font-size: 0.95rem;
       font-weight: 500;
-      color: var(--neon-cyan);
+      color: #f8fafc;
       font-family: inherit;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(255, 255, 255, 0.05);
+      transition: all 0.25s var(--liquid-spring);
+    }
+
+    input::placeholder {
+      color: #64748b;
     }
 
     select, input[type="date"] {
@@ -265,176 +495,216 @@
     }
 
     select option {
-      background: #0b1120;
+      background: #0f172a;
       color: #f8fafc;
-      padding: 12px;
+      padding: 10px;
     }
 
     input:focus, select:focus {
       outline: none;
-      border-color: var(--neon-cyan);
-      background-color: rgba(15, 23, 42, 0.98);
-      box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
+      border-color: #38bdf8;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.28), 0 0 20px rgba(56, 189, 248, 0.2), inset 0 1px 2px rgba(0, 0, 0, 0.1);
+      transform: translateY(-1px);
     }
 
     .hint {
       font-size: 0.8rem;
       color: var(--text-muted);
-      margin: -6px 0 20px 0;
+      margin: -6px 0 18px 0;
       text-align: left;
-      font-style: italic;
     }
 
     /* Class Breakdown Grid */
     .class-grid {
       display: grid;
       grid-template-columns: 1fr 1.3fr 1fr;
-      gap: 12px;
+      gap: 14px;
     }
 
     .class-sub-label {
       font-size: 0.75rem;
       color: var(--text-muted);
       display: block;
-      margin-bottom: 5px;
-      font-weight: 600;
+      margin-bottom: 6px;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
     }
 
     .class-preview-tag {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(0, 242, 254, 0.1);
-      border: 1px solid rgba(0, 242, 254, 0.3);
-      padding: 6px 12px;
-      border-radius: 10px;
-      margin-top: 8px;
-      font-size: 0.82rem;
+      gap: 8px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      margin-top: 10px;
+      font-size: 0.85rem;
       color: var(--neon-cyan);
       font-weight: 600;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
-    /* Buttons */
+    /* Button System */
     .button-group {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       justify-content: center;
       flex-wrap: wrap;
-      margin-top: 10px;
+      margin-top: 14px;
     }
 
     button {
       border: none;
-      border-radius: 12px;
-      padding: 13px 22px;
-      font-size: 0.92rem;
+      border-radius: var(--radius-md);
+      padding: 12px 22px;
+      font-size: 0.94rem;
       font-weight: 700;
-      letter-spacing: 0.5px;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all 0.25s var(--liquid-bounce);
       font-family: inherit;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-    }
-
-    button:active {
-      transform: translateY(0);
+      line-height: 1.3;
+      position: relative;
+      overflow: hidden;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
       color: #ffffff;
-      box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4);
       flex: 1;
       min-width: 130px;
     }
 
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 22px rgba(0, 198, 255, 0.6);
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #c026d3 100%);
+      box-shadow: 0 12px 35px rgba(99, 102, 241, 0.6), 0 0 25px rgba(217, 70, 239, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px) scale(0.97);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
     }
 
     .btn-secondary {
       background: rgba(255, 255, 255, 0.08);
-      color: #cbd5e1;
-      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: var(--shadow-xs), inset 0 1px 0 rgba(255, 255, 255, 0.15);
       flex: 1;
       min-width: 110px;
     }
 
     .btn-secondary:hover {
       background: rgba(255, 255, 255, 0.16);
-      color: #fff;
-      transform: translateY(-2px);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-secondary:active {
+      transform: translateY(1px) scale(0.97);
     }
 
     .btn-success {
-      background: linear-gradient(135deg, #11998e, #38ef7d);
-      color: #052e16;
-      box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3);
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
       flex: 1;
       min-width: 130px;
     }
 
     .btn-success:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 22px rgba(56, 239, 125, 0.5);
+      background: linear-gradient(135deg, #047857 0%, #059669 100%);
+      box-shadow: 0 12px 35px rgba(16, 185, 129, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px) scale(1.02);
     }
 
     .btn-purple {
-      background: linear-gradient(135deg, #7928ca, #9d4edd);
+      background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
       color: #ffffff;
-      box-shadow: 0 4px 15px rgba(157, 78, 221, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
       flex: 1;
       min-width: 110px;
     }
 
     .btn-purple:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(157, 78, 221, 0.55);
+      background: linear-gradient(135deg, #6d28d9 0%, #9333ea 100%);
+      box-shadow: 0 12px 35px rgba(168, 85, 247, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    .btn-result {
+      background: linear-gradient(135deg, #2563eb 0%, #6366f1 40%, #a855f7 100%) !important;
+      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+      animation: liquidGlowPulse 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes liquidGlowPulse {
+      0% { box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4); }
+      50% { box-shadow: 0 14px 40px rgba(168, 85, 247, 0.7), 0 0 30px rgba(56, 189, 248, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.6); }
+      100% { box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4); }
     }
 
     .btn-sm {
-      padding: 7px 13px;
-      font-size: 0.78rem;
-      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.82rem;
+      border-radius: var(--radius-sm);
     }
 
-    /* Stats Grid (Revealed below the box only when GET RESULT is clicked) */
+    /* Stat Cards */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 12px;
+      gap: 14px;
       margin-bottom: 24px;
     }
 
     .stat-card {
-      background: rgba(15, 23, 42, 0.65);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 14px 12px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: var(--radius-md);
+      padding: 18px 16px;
       text-align: center;
-      transition: all 0.2s ease;
-      min-height: 84px;
+      transition: all 0.3s var(--liquid-bounce);
+      min-height: 90px;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      position: relative;
+      overflow: hidden;
     }
 
     .stat-card:hover {
-      border-color: var(--glass-border-glow);
-      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.3);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35), 0 0 20px rgba(99, 102, 241, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
 
     .stat-num {
-      font-size: 1.65rem;
+      font-size: 1.85rem;
       font-weight: 800;
       letter-spacing: -0.5px;
       color: var(--neon-cyan);
+      text-shadow: 0 0 15px rgba(56, 189, 248, 0.35);
       min-height: 38px;
       line-height: 38px;
     }
@@ -445,29 +715,30 @@
       letter-spacing: 0.8px;
       color: var(--text-muted);
       margin-top: 4px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
-    /* Glowing Output Card */
+    /* Generated Report Card */
     #paa {
       display: none;
-      background: var(--glass-bg);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(0, 242, 254, 0.35);
-      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.7) 100%);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-left: 4px solid var(--neon-cyan);
+      border-radius: var(--radius-md);
       text-align: left;
-      padding: 24px 26px;
+      padding: 26px 28px;
       font-size: 0.95rem;
-      line-height: 1.7;
-      color: #e2e8f0;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 254, 0.15);
+      line-height: 1.75;
+      color: #f1f5f9;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
       margin-top: 24px;
       position: relative;
     }
 
     #paa b {
-      color: var(--neon-cyan);
+      color: #93c5fd;
     }
 
     /* Auth Views */
@@ -478,12 +749,14 @@
 
     .auth-tabs {
       display: flex;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 14px;
       padding: 5px;
-      margin-bottom: 24px;
+      margin-bottom: 26px;
       gap: 6px;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
     }
 
     .auth-tab {
@@ -491,52 +764,57 @@
       padding: 10px;
       border-radius: 10px;
       text-align: center;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       font-weight: 700;
       cursor: pointer;
       color: var(--text-muted);
-      transition: all 0.2s;
+      transition: all 0.25s var(--liquid-bounce);
     }
 
     .auth-tab.active {
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(168, 85, 247, 0.9) 100%);
       color: #ffffff;
-      box-shadow: 0 4px 12px rgba(0, 198, 255, 0.35);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
 
     /* Upload Zone */
     .dropzone {
-      border: 2px dashed rgba(0, 242, 254, 0.4);
-      border-radius: 18px;
-      padding: 32px 20px;
+      border: 2px dashed rgba(56, 189, 248, 0.4);
+      border-radius: var(--radius-lg);
+      padding: 34px 22px;
       text-align: center;
-      background: rgba(15, 23, 42, 0.45);
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       cursor: pointer;
-      transition: all 0.25s ease;
-      margin-bottom: 20px;
+      transition: all 0.28s var(--liquid-bounce);
+      margin-bottom: 22px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
     .dropzone:hover, .dropzone.dragover {
-      border-color: var(--neon-cyan);
-      background: rgba(0, 242, 254, 0.08);
-      transform: scale(1.01);
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+      box-shadow: 0 0 30px rgba(56, 189, 248, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
     }
 
     .dropzone-icon {
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       margin-bottom: 10px;
       display: block;
+      filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.5));
     }
 
     .dropzone-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #f1f5f9;
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: #ffffff;
       margin-bottom: 4px;
     }
 
     .dropzone-sub {
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       color: var(--text-muted);
     }
 
@@ -551,20 +829,22 @@
     }
 
     .search-input {
-      max-width: 280px;
-      padding: 9px 14px;
+      max-width: 290px;
+      padding: 10px 16px;
       font-size: 0.88rem;
     }
 
     .table-wrapper {
       max-height: 440px;
       overflow-y: auto;
-      border: 1px solid var(--glass-border);
-      border-radius: 14px;
-      background: rgba(10, 15, 30, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: var(--radius-md);
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
-    /* Custom Scrollbar */
     .table-wrapper::-webkit-scrollbar {
       width: 8px;
     }
@@ -572,11 +852,11 @@
       background: rgba(15, 23, 42, 0.6);
     }
     .table-wrapper::-webkit-scrollbar-thumb {
-      background: rgba(0, 242, 254, 0.3);
+      background: rgba(255, 255, 255, 0.2);
       border-radius: 4px;
     }
     .table-wrapper::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 242, 254, 0.6);
+      background: rgba(255, 255, 255, 0.35);
     }
 
     table {
@@ -587,88 +867,100 @@
     }
 
     th {
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
-      padding: 12px 16px;
+      padding: 14px 18px;
       font-weight: 700;
-      color: var(--neon-cyan);
-      border-bottom: 1px solid var(--glass-border);
-      letter-spacing: 0.5px;
+      color: #cbd5e1;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      letter-spacing: 0.8px;
       text-transform: uppercase;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
+      z-index: 5;
     }
 
     td {
-      padding: 11px 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      color: #e2e8f0;
+      padding: 13px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      color: #f8fafc;
     }
 
     tr:hover td {
-      background: rgba(0, 242, 254, 0.05);
+      background: rgba(255, 255, 255, 0.06);
     }
 
-    /* Action buttons in Table */
     .action-edit-btn {
-      background: rgba(0, 198, 255, 0.15);
-      color: #38bdf8;
-      border: 1px solid rgba(0, 242, 254, 0.35);
-      padding: 5px 12px;
-      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--neon-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
       font-size: 0.78rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s;
       margin-right: 6px;
+      transition: all 0.2s var(--liquid-bounce);
     }
 
     .action-edit-btn:hover {
-      background: rgba(0, 198, 255, 0.35);
-      color: #fff;
-      box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+      background: var(--neon-cyan);
+      color: #0f172a;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+      transform: translateY(-1px);
     }
 
     .action-del-btn {
-      background: rgba(239, 68, 68, 0.15);
-      color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      padding: 5px 12px;
-      border-radius: 6px;
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--neon-pink);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
       font-size: 0.78rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s var(--liquid-bounce);
     }
 
     .action-del-btn:hover {
-      background: rgba(239, 68, 68, 0.35);
-      color: #fff;
+      background: var(--danger);
+      color: #ffffff;
+      box-shadow: 0 0 15px rgba(244, 63, 94, 0.5);
+      transform: translateY(-1px);
     }
 
-    /* Edit Student Modal Overlay */
+    /* Modal Overlay & Card */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(2, 6, 23, 0.82);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      z-index: 1000;
+      background: rgba(3, 7, 18, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 2000;
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
 
     .modal-card {
-      max-width: 440px;
+      max-width: 460px;
       width: 100%;
-      background: var(--glass-bg);
-      border: 1px solid rgba(0, 242, 254, 0.4);
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 242, 254, 0.2);
-      animation: fadeIn 0.25s ease;
+      background: linear-gradient(135deg, rgba(23, 32, 54, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+      backdrop-filter: blur(32px) saturate(200%);
+      -webkit-backdrop-filter: blur(32px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), 0 0 40px rgba(99, 102, 241, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      animation: glassModalPop 0.35s var(--liquid-bounce);
+    }
+
+    @keyframes glassModalPop {
+      0% { transform: scale(0.85) translateY(20px); opacity: 0; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
     }
 
     /* Attendance Storage View Styles */
@@ -678,7 +970,7 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     .storage-export-btns {
@@ -688,14 +980,17 @@
 
     .storage-filter-bar {
       display: flex;
-      gap: 12px;
+      gap: 14px;
       align-items: center;
       flex-wrap: wrap;
-      background: rgba(15, 23, 42, 0.55);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
       margin-bottom: 24px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
     .storage-filter-item {
@@ -713,54 +1008,61 @@
     }
 
     .storage-day-card {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--glass-border);
-      border-radius: 18px;
-      padding: 18px 20px;
-      margin-bottom: 16px;
-      transition: all 0.2s ease;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transition: all 0.25s var(--liquid-spring);
     }
 
     .storage-day-card:hover {
-      border-color: rgba(0, 242, 254, 0.3);
+      border-color: rgba(255, 255, 255, 0.28);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45), 0 0 25px rgba(99, 102, 241, 0.15);
+      transform: translateY(-2px);
     }
 
     .day-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     }
 
     .sessions-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      gap: 16px;
     }
 
     .session-box {
-      background: rgba(10, 15, 30, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
       position: relative;
+      transition: all 0.2s var(--liquid-spring);
     }
 
     .session-box.has-data {
-      border-color: rgba(0, 242, 254, 0.35);
-      background: rgba(0, 242, 254, 0.03);
+      border-color: rgba(52, 211, 153, 0.4);
+      background: rgba(16, 185, 129, 0.08);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
     }
 
     .session-title {
-      font-size: 0.82rem;
-      font-weight: 700;
+      font-size: 0.85rem;
+      font-weight: 800;
       color: var(--neon-cyan);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     /* Date & Session Strip */
@@ -768,34 +1070,30 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(15, 23, 42, 0.65);
-      border: 1px solid rgba(0, 242, 254, 0.25);
-      border-radius: 14px;
-      padding: 10px 18px;
-      margin-bottom: 20px;
-      font-size: 0.88rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
     .datetime-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
     .session-row {
       display: flex;
       align-items: center;
-      gap: 8px;
-    }
-
-    .nav-brand-group {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .roster-action-btns {
@@ -803,75 +1101,344 @@
       gap: 12px;
       flex-wrap: wrap;
       justify-content: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .profile-summary-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
-      margin-top: 30px;
+      gap: 16px;
+      margin-top: 32px;
     }
 
     /* Toast Notification */
     #toast {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid var(--neon-cyan);
-      color: #fff;
-      padding: 14px 22px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 242, 254, 0.3);
+      bottom: 28px;
+      right: 28px;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      color: #ffffff;
+      padding: 14px 24px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 25px rgba(99, 102, 241, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
       display: none;
-      z-index: 2000;
+      z-index: 3000;
       font-size: 0.9rem;
-      font-weight: 600;
-      animation: fadeIn 0.3s ease;
+      font-weight: 700;
+      animation: toastPop 0.3s var(--liquid-bounce);
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes toastPop {
+      0% { transform: translateY(15px) scale(0.9); opacity: 0; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
     }
 
     /* Add Student Inline Form */
     .add-student-box {
       display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
+      gap: 12px;
+      margin-bottom: 18px;
       flex-wrap: wrap;
     }
 
     .add-student-box input {
       flex: 1;
-      min-width: 130px;
+      min-width: 140px;
     }
 
-    /* Empty state notice */
     .empty-state {
       text-align: center;
-      padding: 36px 20px;
+      padding: 44px 20px;
       color: var(--text-muted);
     }
 
     .empty-state-icon {
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       margin-bottom: 12px;
       display: block;
+      filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.4));
     }
 
-    /* Responsive - Comprehensive Mobile Formatting */
-    @media (max-width: 768px) {
-      .app-container {
-        margin: 18px auto 0;
-        padding: 0 14px;
+    /* Desktop default states for mobile drawer elements */
+    .mobile-nav-toggle {
+      display: none;
+    }
+    .mobile-nav-overlay {
+      display: none;
+    }
+    .mobile-nav-header {
+      display: none;
+    }
+    .mobile-nav-user-info {
+      display: none;
+    }
+    .mobile-nav-footer {
+      display: none;
+    }
+    .nav-tabs-list {
+      display: contents;
+    }
+
+    /* Responsive Media Queries */
+    @media (max-width: 1024px) {
+      .nav-container {
+        padding: 0 16px;
+        gap: 10px;
       }
-      .glass-card {
-        padding: 22px 16px;
-        border-radius: 18px;
-        margin-bottom: 18px;
+      .brand-text {
+        font-size: 0.95rem;
+      }
+      .nav-tab-btn {
+        padding: 7px 14px;
+        font-size: 0.82rem;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .navbar {
+        padding: 0;
+        background: rgba(15, 23, 42, 0.85);
+      }
+      .nav-container {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 14px;
+        gap: 10px;
+      }
+
+      /* Mobile Hamburger Button on the Left */
+      .mobile-nav-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 7px 14px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #ffffff;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: all 0.2s var(--liquid-spring);
+        backdrop-filter: blur(12px);
+      }
+      .mobile-nav-toggle:hover, .mobile-nav-toggle:active {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .hamburger-icon {
+        font-size: 1.2rem;
+        line-height: 1;
+      }
+      .nav-toggle-text {
+        font-size: 0.85rem;
+      }
+
+      .nav-brand-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        flex: 1;
+      }
+      .brand {
+        font-size: 0.95rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .brand-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.88rem;
+      }
+      .nav-badges {
+        display: none;
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+      }
+      .nav-actions .btn-logout {
+        padding: 7px 12px;
+        font-size: 0.8rem;
+      }
+
+      /* Dark Backdrop Overlay for Vertical Left Drawer */
+      .mobile-nav-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(3, 7, 18, 0.65);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: 2900;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .mobile-nav-overlay.mobile-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* VERTICAL LEFT NAVIGATION BAR / DRAWER */
+      .nav-links {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 300px;
+        max-width: 84vw;
+        height: 100vh;
+        height: 100dvh;
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(32px) saturate(200%);
+        -webkit-backdrop-filter: blur(32px) saturate(200%);
+        border: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 0;
+        box-shadow: 10px 0 35px rgba(0, 0, 0, 0.6);
+        z-index: 3000;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 22px 18px;
+        gap: 14px;
+        transform: translateX(-100%);
+        transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .nav-links.mobile-open {
+        transform: translateX(0) !important;
+      }
+
+      /* Mobile Drawer Header */
+      .mobile-nav-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      }
+      .mobile-nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        font-size: 1rem;
+        color: #ffffff;
+      }
+      .mobile-nav-close {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: var(--radius-sm);
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .mobile-nav-close:hover {
+        background: rgba(244, 63, 94, 0.25);
+        color: var(--neon-pink);
+        border-color: rgba(244, 63, 94, 0.4);
+      }
+
+      /* Mobile Drawer Context Badges */
+      .mobile-nav-user-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        padding-bottom: 6px;
+      }
+      .mobile-nav-user-info .badge {
+        font-size: 0.76rem;
+        padding: 6px 12px;
+      }
+
+      /* Vertical Tabs List */
+      .nav-tabs-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+      }
+      .nav-tab-btn {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: 100%;
+        padding: 13px 16px;
+        border-radius: var(--radius-md);
+        font-size: 0.94rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-align: left;
+        justify-content: flex-start;
+        background: transparent;
+        border: 1px solid transparent;
+        transition: all 0.2s var(--liquid-spring);
+        box-shadow: none;
+      }
+      .nav-tab-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+      }
+      .nav-tab-btn.active {
+        color: #ffffff;
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.85) 0%, rgba(168, 85, 247, 0.85) 100%);
+        border-color: rgba(255, 255, 255, 0.25);
+        font-weight: 700;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+      }
+      .nav-tab-btn .tab-icon {
+        font-size: 1.2rem;
+        width: 26px;
+        text-align: center;
+      }
+
+      /* Mobile Drawer Footer with Logout */
+      .mobile-nav-footer {
+        display: block;
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.14);
+      }
+      .mobile-drawer-logout-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: rgba(244, 63, 94, 0.18);
+        color: var(--neon-pink);
+        border: 1px solid rgba(244, 63, 94, 0.4);
+        border-radius: var(--radius-md);
+        padding: 12px 18px;
+        font-size: 0.92rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .mobile-drawer-logout-btn:hover {
+        background: rgba(244, 63, 94, 0.35);
+        color: #ffffff;
       }
     }
 
@@ -879,73 +1446,24 @@
       body {
         padding-bottom: 30px;
       }
-      .navbar {
-        padding: 10px 14px;
-      }
-      .nav-container {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-      }
-      .nav-brand-group {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 6px;
-        width: 100%;
-      }
-      .brand {
-        font-size: 1rem;
-        justify-content: center;
-        letter-spacing: 0.5px;
-      }
-      .nav-badges {
-        justify-content: center;
-        gap: 6px;
-      }
-      /* Clean swipeable horizontal tabs on mobile */
-      .nav-links {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        gap: 6px;
-        padding: 2px 2px 8px 2px;
-        width: 100%;
-        scrollbar-width: none;
-        justify-content: flex-start;
-      }
-      .nav-links::-webkit-scrollbar {
-        display: none;
-      }
-      .nav-tab-btn, .btn-logout {
-        flex: 0 0 auto;
-        white-space: nowrap;
-        font-size: 0.78rem;
-        padding: 7px 11px;
-        border-radius: 8px;
-      }
-
       .app-container {
-        margin-top: 14px;
-        padding: 0 10px;
+        margin-top: 16px;
+        padding: 0 12px;
       }
       .glass-card {
-        padding: 18px 14px;
-        border-radius: 16px;
-        margin-bottom: 16px;
+        padding: 24px 18px;
+        border-radius: var(--radius-md);
+        margin-bottom: 18px;
       }
       h1 {
-        font-size: 1.55rem;
-        letter-spacing: 0.5px;
-        line-height: 1.25;
+        font-size: 1.65rem;
+        letter-spacing: -0.3px;
       }
       .subtitle {
-        font-size: 0.82rem;
-        margin-bottom: 16px;
+        font-size: 0.86rem;
+        margin-bottom: 20px;
       }
 
-      /* Class breakdown on mobile */
       .class-grid {
         grid-template-columns: 1fr;
         gap: 10px;
@@ -953,17 +1471,16 @@
       .class-preview-tag {
         width: 100%;
         justify-content: center;
-        font-size: 0.8rem;
-        padding: 8px 10px;
+        font-size: 0.82rem;
+        padding: 9px 12px;
         word-break: break-word;
       }
 
-      /* Date & Session strip formatted cleanly */
       .auto-datetime-strip {
         flex-direction: column !important;
         align-items: stretch !important;
         gap: 10px !important;
-        padding: 12px 14px !important;
+        padding: 14px 16px !important;
       }
       .datetime-row, .session-row {
         display: flex;
@@ -972,12 +1489,11 @@
         width: 100%;
       }
       .datetime-row input[type="date"] {
-        max-width: 170px;
+        max-width: 180px;
         font-size: 0.85rem;
-        padding: 6px 10px;
+        padding: 7px 12px;
       }
 
-      /* Action buttons layout: Primary full-width on top, 3 secondary buttons aligned below */
       .button-group {
         display: flex;
         flex-wrap: wrap;
@@ -987,19 +1503,18 @@
         width: 100% !important;
         flex: 1 1 100%;
         order: -1;
-        padding: 13px 18px;
-        font-size: 0.95rem;
+        padding: 14px 20px;
+        font-size: 0.98rem;
         font-weight: 800;
       }
       .button-group button:not(.btn-result) {
         flex: 1 1 calc(33.333% - 6px);
         min-width: 65px;
-        padding: 10px 4px;
+        padding: 11px 4px;
         font-size: 0.78rem;
         gap: 4px;
       }
 
-      /* Stats Overview: balanced 2x2 grid + 5th item centered */
       .stats-grid {
         grid-template-columns: 1fr 1fr;
         gap: 10px;
@@ -1007,41 +1522,36 @@
         margin-bottom: 18px;
       }
       .stat-card {
-        padding: 10px 8px;
-        min-height: 70px;
-        border-radius: 12px;
+        padding: 14px 10px;
+        min-height: 76px;
       }
       .stat-card:nth-child(5) {
         grid-column: span 2;
       }
       .stat-num {
-        font-size: 1.45rem;
-        min-height: 30px;
-        line-height: 30px;
+        font-size: 1.55rem;
+        min-height: 32px;
+        line-height: 32px;
       }
       .stat-label {
         font-size: 0.68rem;
-        letter-spacing: 0.5px;
       }
 
-      /* Report card responsive wrapping */
       #paa {
-        padding: 16px 14px;
-        font-size: 0.82rem;
-        line-height: 1.6;
-        border-radius: 14px;
+        padding: 20px 18px;
+        font-size: 0.85rem;
+        line-height: 1.65;
         word-break: break-word;
-        margin-top: 18px;
+        margin-top: 20px;
       }
 
-      /* Attendance Storage View Mobile Formats */
       .storage-header-bar {
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
       }
       .storage-header-bar h2 {
-        font-size: 1.25rem !important;
+        font-size: 1.3rem !important;
       }
       .storage-export-btns {
         width: 100%;
@@ -1049,16 +1559,15 @@
       .storage-export-btns button {
         flex: 1;
         justify-content: center;
-        font-size: 0.76rem;
-        padding: 8px 10px;
+        font-size: 0.78rem;
+        padding: 9px 12px;
       }
 
       .storage-filter-bar {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px;
-        padding: 12px 14px;
-        border-radius: 14px;
+        padding: 14px 16px;
       }
       .storage-filter-item {
         width: 100%;
@@ -1067,7 +1576,8 @@
         gap: 4px;
       }
       .storage-filter-item label {
-        font-size: 0.72rem;
+        font-size: 0.74rem;
+        color: #cbd5e1;
       }
       .storage-filter-item select {
         width: 100% !important;
@@ -1075,15 +1585,15 @@
         font-size: 0.85rem;
       }
       .storage-filter-item:nth-child(3) {
-        grid-column: span 2; /* DATE selector spans full width */
+        grid-column: span 2;
       }
       .storage-badges-wrap {
         grid-column: span 2;
         margin-left: 0;
         width: 100%;
         justify-content: space-between;
-        padding-top: 6px;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
         gap: 6px;
       }
       .storage-badges-wrap .badge {
@@ -1091,30 +1601,26 @@
         padding: 4px 8px;
       }
 
-      /* Day Card & Sessions on mobile */
       .storage-day-card {
-        padding: 14px 12px;
-        border-radius: 14px;
-        margin-bottom: 12px;
+        padding: 16px 14px;
+        margin-bottom: 14px;
       }
       .day-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 4px;
-        margin-bottom: 10px;
-        padding-bottom: 8px;
+        gap: 6px;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
       }
       .sessions-grid {
         grid-template-columns: 1fr;
         gap: 10px;
       }
       .session-box {
-        padding: 12px;
-        border-radius: 12px;
+        padding: 14px;
         word-break: break-word;
       }
 
-      /* Roster view mobile */
       .roster-header {
         flex-direction: column;
         align-items: stretch;
@@ -1126,15 +1632,14 @@
         font-size: 0.85rem;
       }
       .dropzone {
-        padding: 20px 14px;
-        border-radius: 14px;
+        padding: 24px 16px;
       }
       .dropzone-icon {
-        font-size: 2rem;
-        margin-bottom: 6px;
+        font-size: 2.2rem;
+        margin-bottom: 8px;
       }
       .dropzone-title {
-        font-size: 0.95rem;
+        font-size: 0.98rem;
       }
       .roster-action-btns {
         flex-direction: column;
@@ -1154,34 +1659,30 @@
       }
       .table-wrapper {
         max-height: 380px;
-        border-radius: 10px;
       }
       table {
-        font-size: 0.78rem;
+        font-size: 0.8rem;
       }
       th, td {
-        padding: 8px 8px;
+        padding: 10px 12px;
       }
       .action-edit-btn, .action-del-btn {
-        padding: 4px 8px;
-        font-size: 0.72rem;
-        margin-right: 2px;
+        padding: 5px 10px;
+        font-size: 0.74rem;
+        margin-right: 4px;
       }
 
-      /* Profile view mobile */
       .profile-summary-grid {
         grid-template-columns: 1fr !important;
-        gap: 10px !important;
-        margin-top: 18px !important;
+        gap: 12px !important;
+        margin-top: 20px !important;
       }
 
-      /* Modal card mobile */
       .modal-overlay {
-        padding: 12px;
+        padding: 14px;
       }
       .modal-card {
-        padding: 20px 14px;
-        border-radius: 16px;
+        padding: 24px 18px;
         width: 100%;
       }
       .modal-card .button-group {
@@ -1192,30 +1693,24 @@
         width: 100%;
       }
 
-      /* Toast Notification on mobile */
       #toast {
-        bottom: 14px;
-        right: 12px;
-        left: 12px;
-        max-width: calc(100% - 24px);
+        bottom: 16px;
+        right: 14px;
+        left: 14px;
+        max-width: calc(100% - 28px);
         text-align: center;
-        padding: 11px 14px;
-        font-size: 0.8rem;
-        border-radius: 10px;
-      }
-
-      /* Prevent iOS auto-zoom on input focus */
-      input[type="text"],
-      input[type="password"],
-      input[type="email"],
-      input[type="date"],
-      select {
-        font-size: 16px;
+        padding: 12px 16px;
+        font-size: 0.82rem;
       }
     }
   </style>
 </head>
 <body>
+  <!-- Ambient Glassmorphism Background Light Orbs -->
+  <div class="glass-orb glass-orb-1" aria-hidden="true"></div>
+  <div class="glass-orb glass-orb-2" aria-hidden="true"></div>
+  <div class="glass-orb glass-orb-3" aria-hidden="true"></div>
+  <div class="glass-orb glass-orb-4" aria-hidden="true"></div>
 
   <!-- Datalist for Engineering Branches & Short Forms -->
   <datalist id="engineering-courses-list"></datalist>
@@ -1224,9 +1719,16 @@
   <!-- Top Navigation Bar (Visible when Logged In) -->
   <header class="navbar" id="app-navbar">
     <div class="nav-container">
+      <!-- Mobile Left Hamburger Toggle -->
+      <button class="mobile-nav-toggle" id="mobile-nav-toggle" onclick="toggleMobileNav()" aria-label="Toggle Navigation Menu">
+        <span class="hamburger-icon">☰</span>
+        <span class="nav-toggle-text">Menu</span>
+      </button>
+
       <div class="nav-brand-group">
         <a href="#" class="brand" onclick="showTab('attendance')">
-          🎓 COLLEGE ATTENDANCE PORTAL
+          <span class="brand-icon">🎓</span>
+          <span class="brand-text">COLLEGE ATTENDANCE PORTAL</span>
         </a>
         <div class="nav-badges">
           <span class="badge badge-purple" id="nav-dept-badge">Class</span>
@@ -1234,19 +1736,51 @@
         </div>
       </div>
 
-      <div class="nav-links">
-        <button class="nav-tab-btn active" id="tab-btn-attendance" onclick="showTab('attendance')">
-          📋 Attendance
-        </button>
-        <button class="nav-tab-btn" id="tab-btn-storage" onclick="showTab('storage')">
-          📅 Attendance Storage
-        </button>
-        <button class="nav-tab-btn" id="tab-btn-roster" onclick="showTab('roster')">
-          👥 Student Roster & Upload
-        </button>
-        <button class="nav-tab-btn" id="tab-btn-profile" onclick="showTab('profile')">
-          👤 Profile
-        </button>
+      <!-- Backdrop Overlay for Vertical Left Navigation Drawer -->
+      <div class="mobile-nav-overlay" id="mobile-nav-overlay" onclick="closeMobileNav()" aria-hidden="true"></div>
+
+      <!-- Navigation Bar (Center segmented pills on desktop, Vertical Left Navigation Drawer on mobile) -->
+      <nav class="nav-links" id="main-nav-links" aria-label="Portal Navigation">
+        <!-- Mobile Drawer Header (Visible only on mobile) -->
+        <div class="mobile-nav-header">
+          <div class="mobile-nav-brand">
+            <span class="brand-icon">🎓</span>
+            <span class="brand-text">COLLEGE PORTAL</span>
+          </div>
+          <button class="mobile-nav-close" onclick="closeMobileNav()" aria-label="Close Navigation">✕</button>
+        </div>
+
+        <!-- Mobile Drawer Badges -->
+        <div class="mobile-nav-user-info">
+          <span class="badge badge-purple" id="mobile-dept-badge">Class</span>
+          <span class="badge badge-cyan" id="mobile-count-badge">👥 0 Students</span>
+        </div>
+
+        <!-- Nav Tabs (Vertical list on mobile, horizontal pills on desktop) -->
+        <div class="nav-tabs-list">
+          <button class="nav-tab-btn active" id="tab-btn-attendance" onclick="showTab('attendance')">
+            <span class="tab-icon">📋</span> Attendance
+          </button>
+          <button class="nav-tab-btn" id="tab-btn-storage" onclick="showTab('storage')">
+            <span class="tab-icon">📅</span> Attendance Storage
+          </button>
+          <button class="nav-tab-btn" id="tab-btn-roster" onclick="showTab('roster')">
+            <span class="tab-icon">👥</span> Student Roster & Upload
+          </button>
+          <button class="nav-tab-btn" id="tab-btn-profile" onclick="showTab('profile')">
+            <span class="tab-icon">👤</span> Profile
+          </button>
+        </div>
+
+        <!-- Mobile Drawer Footer -->
+        <div class="mobile-nav-footer">
+          <button class="mobile-drawer-logout-btn" onclick="logoutUser()">
+            🚪 Sign Out
+          </button>
+        </div>
+      </nav>
+
+      <div class="nav-actions">
         <button class="btn-logout" onclick="logoutUser()">
           🚪 Logout
         </button>
@@ -1305,7 +1839,7 @@
 
         <!-- Class Details Breakdown -->
         <div style="margin-bottom: 20px;">
-          <label style="font-size: 0.85rem; font-weight: 700; color: #e2e8f0; letter-spacing: 0.8px; display: block; margin-bottom: 8px;">
+          <label style="font-size: 0.85rem; font-weight: 700; color: #cbd5e1; letter-spacing: 0.8px; display: block; margin-bottom: 8px;">
             CLASS DETAILS
           </label>
           <div class="class-grid">
@@ -1336,7 +1870,7 @@
           </div>
           <div class="class-preview-tag">
             <span>Class Designation:</span>
-            <strong id="reg-class-preview" style="color: #fff;">II CSE - A</strong>
+            <strong id="reg-class-preview" style="color: var(--neon-cyan); font-weight: 800;">II CSE - A</strong>
           </div>
         </div>
 
@@ -1364,9 +1898,9 @@
     <h1 id="dept-header-title">Class Attendance</h1>
     <p class="subtitle" id="dept-header-sub">Department Portal</p>
 
-    <!-- Empty Roster Banner Alert -->
-    <div id="empty-roster-alert" style="display: none; background: rgba(0, 198, 255, 0.1); border: 1px solid rgba(0, 242, 254, 0.4); border-radius: 16px; padding: 18px 22px; margin-bottom: 24px; text-align: center;">
-      <p style="font-size: 0.95rem; color: #bae6fd; margin-bottom: 12px;">
+    <!-- Empty Roster Banner Alert with Frosted Glass -->
+    <div id="empty-roster-alert" style="display: none; background: rgba(14, 165, 233, 0.12); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 20px; padding: 20px 24px; margin-bottom: 24px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.2);">
+      <p style="font-size: 0.95rem; color: #38bdf8; margin-bottom: 12px; font-weight: 600;">
         ℹ️ Your student roster is currently empty. Please upload your class Excel/CSV file to start taking attendance.
       </p>
       <button type="button" class="btn-primary btn-sm" onclick="showTab('roster')">
@@ -1382,11 +1916,11 @@
           <label for="att-selected-date" style="color: var(--neon-cyan); font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer; margin: 0;">
             <span>📅 DATE:</span>
           </label>
-          <input type="date" id="att-selected-date" style="background: rgba(10, 15, 30, 0.8); border: 1px solid rgba(0, 242, 254, 0.35); border-radius: 8px; color: #38bdf8; padding: 6px 12px; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer;">
+          <input type="date" id="att-selected-date" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; color: #ffffff; padding: 6px 12px; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer;">
         </div>
         <div class="session-row">
           <span style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px;">Auto Session:</span>
-          <span id="auto-session-badge" class="badge" style="background: rgba(0, 242, 254, 0.15); color: var(--neon-cyan); border: 1px solid rgba(0, 242, 254, 0.35); font-weight: 700; font-size: 0.82rem; cursor: pointer; padding: 5px 12px; border-radius: 8px; transition: all 0.2s;" title="Auto-detected from current time. Click to toggle session if needed." onclick="toggleSessionOverride()">
+          <span id="auto-session-badge" class="badge badge-cyan" style="cursor: pointer; padding: 5px 14px; border-radius: 9999px; transition: all 0.2s;" title="Auto-detected from current time. Click to toggle session if needed." onclick="toggleSessionOverride()">
             🌅 Forenoon (FN)
           </span>
         </div>
@@ -1444,6 +1978,7 @@
 
     <!-- Glowing Report Output Card -->
     <div id="paa"></div>
+    <div id="absent-messages-card" style="display: none; margin-top: 24px;"></div>
   </div>
 
   <!-- ======================== 3. ATTENDANCE STORAGE VIEW (YEAR -> MONTH -> DAY -> FN/AN) ======================== -->
@@ -1541,7 +2076,7 @@
         <button type="button" class="btn-secondary btn-sm" onclick="downloadSampleTemplate('csv')">
           📥 Download Template (.csv)
         </button>
-        <button type="button" class="btn-secondary btn-sm" onclick="clearRosterData()" style="color: #fca5a5;">
+        <button type="button" class="btn-secondary btn-sm" onclick="clearRosterData()" style="color: #fb7185;">
           🗑️ Clear Roster
         </button>
       </div>
@@ -1551,7 +2086,7 @@
     <div class="glass-card">
       <div class="roster-header">
         <div>
-          <h2 style="font-size: 1.35rem; color: #fff;">
+          <h2 style="font-size: 1.35rem; color: #ffffff;">
             Current Student Dictionary
           </h2>
           <span class="badge badge-green" id="roster-count-badge" style="margin-top: 6px;">
@@ -1565,6 +2100,7 @@
       <div class="add-student-box">
         <input type="text" id="new-roll" placeholder="Roll Number (e.g. 101)">
         <input type="text" id="new-name" placeholder="Student Name (e.g. RAHUL S)">
+        <input type="text" id="new-mobile" placeholder="Mobile Number (e.g. 9876543210)">
         <button type="button" class="btn-primary btn-sm" onclick="addSingleStudent()">
           ➕ Add Student
         </button>
@@ -1576,8 +2112,9 @@
           <thead>
             <tr>
               <th style="width: 50px;">#</th>
-              <th style="width: 140px;">Roll Number</th>
+              <th style="width: 130px;">Roll Number</th>
               <th>Student Name</th>
+              <th style="width: 140px;">Mobile Number</th>
               <th style="width: 150px; text-align: center;">Actions</th>
             </tr>
           </thead>
@@ -1611,7 +2148,7 @@
 
         <!-- Class Details Breakdown in Profile -->
         <div style="margin-bottom: 20px;">
-          <label style="font-size: 0.85rem; font-weight: 700; color: #e2e8f0; letter-spacing: 0.8px; display: block; margin-bottom: 8px;">
+          <label style="font-size: 0.85rem; font-weight: 700; color: #cbd5e1; letter-spacing: 0.8px; display: block; margin-bottom: 8px;">
             CLASS DETAILS
           </label>
           <div class="class-grid">
@@ -1642,7 +2179,7 @@
           </div>
           <div class="class-preview-tag">
             <span>Class Designation:</span>
-            <strong id="prof-class-preview" style="color: #fff;">-</strong>
+            <strong id="prof-class-preview" style="color: var(--neon-cyan); font-weight: 800;">-</strong>
           </div>
         </div>
 
@@ -1658,6 +2195,69 @@
             <span class="label-hint" style="color: var(--neon-green);">✏️ Editable Login ID</span>
           </label>
           <input type="text" id="prof-email" required placeholder="e.g. faculty@college.edu or username">
+        </div>
+
+        <!-- TextBee SMS Gateway Setup & Procedure -->
+        <div class="glass-card" style="margin: 24px 0; padding: 22px 24px; border: 1px solid rgba(245, 158, 11, 0.3); background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(20px); border-radius: 18px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+            <div>
+              <h3 style="font-size: 1.15rem; color: var(--neon-amber); margin: 0; display: flex; align-items: center; gap: 8px;">
+                🐝 TextBee SMS Gateway Setup
+              </h3>
+              <p style="font-size: 0.82rem; color: #94a3b8; margin-top: 4px;">
+                Connect your Android phone to dispatch automated absent SMS directly from your SIM card
+              </p>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <a href="https://textbee.dev" target="_blank" rel="noopener noreferrer" class="btn-primary btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 0.8rem; background: linear-gradient(135deg, #f59e0b, #d97706);">
+                📥 Download TextBee App
+              </a>
+              <a href="https://textbee.dev/dashboard" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 0.8rem;">
+                🌐 TextBee Dashboard
+              </a>
+            </div>
+          </div>
+
+          <!-- Step-by-Step Procedure Instructions -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; font-size: 0.85rem; line-height: 1.6; color: #cbd5e1;">
+            <strong style="color: var(--neon-cyan); display: block; margin-bottom: 8px; font-size: 0.9rem;">
+              📋 Step-by-Step Procedure to Get Your API Key & Connect Your Device:
+            </strong>
+            <ol style="margin-left: 20px; display: flex; flex-direction: column; gap: 6px;">
+              <li><strong>Download & Install App:</strong> Open <a href="https://textbee.dev" target="_blank" rel="noopener noreferrer" style="color: var(--neon-cyan); font-weight: 700; text-decoration: underline;">textbee.dev</a> on your Android phone, download the APK, install it, and grant SMS and background/battery permissions.</li>
+              <li><strong>Create Account:</strong> Sign up or log in at <a href="https://textbee.dev/dashboard" target="_blank" rel="noopener noreferrer" style="color: var(--neon-cyan); font-weight: 700; text-decoration: underline;">textbee.dev/dashboard</a> or directly inside the mobile app.</li>
+              <li><strong>Add & Connect Device:</strong> Open the TextBee app on your phone, sign in with the same account, and tap to register your phone. The app will generate and show your unique <strong>Device ID</strong>.</li>
+              <li><strong>Get Your API Key:</strong> In your TextBee web dashboard or app profile, copy your personal <strong>API Key</strong>.</li>
+              <li><strong>Set Your API Key & Device ID:</strong> Enter your API Key and Device ID in the fields below, then click <strong>"💾 SAVE PROFILE CHANGES"</strong>.</li>
+            </ol>
+            <div style="margin-top: 14px; padding: 12px 16px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 10px; color: #fde68a; font-size: 0.84rem; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+              <span>⚠️</span>
+              <span><strong>Notice:</strong> Please set your own API Key and Device ID so that all automated absent messages and reminders are dispatched directly from your device and SIM card!</span>
+            </div>
+          </div>
+
+          <!-- TextBee API Key Input -->
+          <div class="input-group">
+            <label for="prof-textbee-key">
+              <span>TEXTBEE API KEY</span>
+              <span class="label-hint">🐝 TextBee Gateway (<a href="https://textbee.dev" target="_blank" rel="noopener noreferrer" style="color: #0284c7; text-decoration: none;">https://textbee.dev</a>)</span>
+            </label>
+            <div style="position: relative; display: flex; align-items: center;">
+              <input type="password" id="prof-textbee-key" placeholder="Enter your TextBee API Key (e.g. txb_...)" style="padding-right: 48px;">
+              <button type="button" id="btn-toggle-tb-key" onclick="toggleTextBeeKeyVisibility()" style="position: absolute; right: 8px; background: transparent; border: none; padding: 6px 10px; cursor: pointer; font-size: 1.05rem; color: #64748b;" title="Show/Hide API Key">
+                👁️
+              </button>
+            </div>
+          </div>
+
+          <!-- TextBee Device ID Input -->
+          <div class="input-group" style="margin-bottom: 0;">
+            <label for="prof-textbee-device-id">
+              <span>TEXTBEE DEVICE ID (Optional)</span>
+              <span class="label-hint">Device ID from TextBee Android app</span>
+            </label>
+            <input type="text" id="prof-textbee-device-id" placeholder="Optional Device ID (if multiple devices)">
+          </div>
         </div>
 
         <div class="button-group" style="margin-top: 24px;">
@@ -1708,6 +2308,11 @@
         <input type="text" id="edit-name" placeholder="Student Name" required>
       </div>
 
+      <div class="input-group">
+        <label for="edit-mobile">MOBILE NUMBER</label>
+        <input type="text" id="edit-mobile" placeholder="Mobile Number (e.g. 9876543210)">
+      </div>
+
       <div class="button-group" style="margin-top: 24px;">
         <button type="button" class="btn-primary" onclick="saveStudentEdit()">
           💾 Save Changes
@@ -1756,7 +2361,141 @@
     const STORAGE_ATTENDANCE_PREFIX = 'attendance_records_';
 
     let currentUser = null;
-    let studentDict = {}; // Current active student dictionary: { [rollNo]: studentName }
+    let studentDict = {}; // Current active student dictionary: { [rollNo]: { name, mobile } }
+
+    function getStudentObj(roll) {
+      const entry = studentDict[roll];
+      if (!entry) return { name: 'Unknown', mobile: '' };
+      if (typeof entry === 'string') return { name: entry, mobile: '' };
+      return { name: entry.name || 'Unknown', mobile: entry.mobile || '' };
+    }
+
+    function getStudentName(roll) {
+      return getStudentObj(roll).name;
+    }
+
+    function getStudentMobile(roll) {
+      return getStudentObj(roll).mobile;
+    }
+
+    function getDayName(dateValStr) {
+      if (!dateValStr) return '';
+      const [y, m, d] = dateValStr.split('-').map(Number);
+      const dt = new Date(y, m - 1, d);
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      return days[dt.getDay()] || '';
+    }
+
+    function generateAbsentStudentMessage(dayName, displayDate, session) {
+      return `you are marked as absent in the ${dayName}, ${displayDate}, ${session}`;
+    }
+
+    function copyAbsentMessage(msgText) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msgText).then(() => {
+          showToast("📋 Absent Message Copied!");
+        }).catch(() => fallbackCopyText(msgText));
+      } else {
+        fallbackCopyText(msgText);
+      }
+    }
+
+    function copyAllAbsentMessages(messages) {
+      if (!messages || messages.length === 0) return;
+      const fullText = messages.join('\n');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(fullText).then(() => {
+          showToast("📋 All Absent Messages Copied!");
+        }).catch(() => fallbackCopyText(fullText));
+      } else {
+        fallbackCopyText(fullText);
+      }
+    }
+
+    function triggerDirectSMS(mobileArray, msgText) {
+      if (!mobileArray || mobileArray.length === 0) {
+        showToast("⚠️ No mobile numbers available for absent students.");
+        return;
+      }
+      const cleanMobiles = mobileArray.map(m => String(m || '').replace(/\D/g, '')).filter(Boolean);
+      if (cleanMobiles.length === 0) {
+        showToast("⚠️ No valid mobile numbers found.");
+        return;
+      }
+      const smsUrl = `sms:${cleanMobiles.join(',')}?body=${encodeURIComponent(msgText)}`;
+      window.location.href = smsUrl;
+      showToast(`📱 Opening Direct SMS composer for ${cleanMobiles.length} absent student(s)!`);
+    }
+
+    const DEFAULT_TEXTBEE_KEY = 'txb_KNbTZ7GF2uPPsLyEwj6Kzu6FotYNnEpU';
+    const DEFAULT_TEXTBEE_DEVICE_ID = '6aa62ccac949ca6c4eeade65';
+
+    function sendTextBeeSMS(mobileArray, msgText) {
+      if (!mobileArray || mobileArray.length === 0) {
+        showToast("⚠️ No mobile numbers available for absent students.");
+        return;
+      }
+      const cleanMobiles = mobileArray.map(m => String(m || '').replace(/\D/g, '')).filter(Boolean);
+      if (cleanMobiles.length === 0) {
+        showToast("⚠️ No valid mobile numbers found.");
+        return;
+      }
+
+      // Format recipients with international country code (+91 for 10-digit Indian numbers)
+      const formattedRecipients = cleanMobiles.map(m => {
+        if (m.length === 10) return '+91' + m;
+        return m.startsWith('+') ? m : '+' + m;
+      });
+
+      const apiKey = (currentUser && currentUser.textbeeKey) || DEFAULT_TEXTBEE_KEY;
+      const deviceId = (currentUser && currentUser.textbeeDeviceId) || DEFAULT_TEXTBEE_DEVICE_ID;
+
+      showToast(`🐝 Sending TextBee SMS for ${cleanMobiles.length} student(s)...`);
+
+      const payload = {
+        recipients: formattedRecipients,
+        message: msgText
+      };
+      if (deviceId) {
+        payload.deviceId = deviceId;
+      }
+
+      const url = deviceId 
+        ? `https://api.textbee.dev/api/v1/gateway/devices/${deviceId}/send-sms`
+        : 'https://api.textbee.dev/api/v1/gateway/send-sms';
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        const resObj = (data && data.data) ? data.data : data;
+        if (resObj && (resObj.success === true || resObj.smsBatchId)) {
+          showToast(`✅ TextBee SMS dispatched to vivo V2356 for ${cleanMobiles.length} student(s)!`);
+        } else {
+          const errMsg = (resObj && (resObj.error || resObj.message)) || (data && (data.error || data.message)) || 'TextBee Gateway Notice';
+          alert(`TextBee API Notice: ${errMsg}\n\nEnsure your vivo V2356 phone has TextBee app running in background with SMS permissions enabled.`);
+          showToast(`⚠️ TextBee: ${errMsg}`);
+        }
+      })
+      .catch(err => {
+        console.error('TextBee Error:', err);
+        showToast(`⚠️ TextBee error: ${err.message || 'Network error'}`);
+      });
+    }
+
+    function sendBackgroundSMS(mobileArray, msgText) {
+      if (!mobileArray || mobileArray.length === 0) return;
+      const cleanMobiles = mobileArray.map(m => String(m || '').replace(/\D/g, '')).filter(Boolean);
+      if (cleanMobiles.length === 0) return;
+
+      sendTextBeeSMS(cleanMobiles, msgText);
+    }
 
     // Populate Datalist Options for Typeable Branch & Short Form
     function populateDropdownOptions() {
@@ -1935,12 +2674,19 @@
 
       // Initialize 1st tab date picker to today
       const dateInput = document.getElementById('att-selected-date');
+      const now = new Date();
+      const currentYearStr = String(now.getFullYear());
+      const currentMonthStr = String(now.getMonth() + 1).padStart(2, '0');
+      const currentDayStr = String(now.getDate()).padStart(2, '0');
+
       if (dateInput && !dateInput.value) {
-        const now = new Date();
-        const y = now.getFullYear();
-        const m = String(now.getMonth() + 1).padStart(2, '0');
-        const d = String(now.getDate()).padStart(2, '0');
-        dateInput.value = `${y}-${m}-${d}`;
+        dateInput.value = `${currentYearStr}-${currentMonthStr}-${currentDayStr}`;
+      }
+
+      // Initialize Storage month filter to current month
+      const monthSelect = document.getElementById('storage-month-select');
+      if (monthSelect && !monthSelect.dataset.userChanged) {
+        monthSelect.value = currentMonthStr;
       }
 
       // Start automatic live date, time & session clock
@@ -2088,7 +2834,47 @@
     }
 
     // --- Tab Navigation ---
+    
+    // --- Mobile Vertical Left Navigation Drawer Controls ---
+    function toggleMobileNav() {
+      const navLinks = document.getElementById('main-nav-links');
+      const overlay = document.getElementById('mobile-nav-overlay');
+      if (!navLinks) return;
+      if (navLinks.classList.contains('mobile-open')) {
+        closeMobileNav();
+      } else {
+        openMobileNav();
+      }
+    }
+
+    function openMobileNav() {
+      const navLinks = document.getElementById('main-nav-links');
+      const overlay = document.getElementById('mobile-nav-overlay');
+      if (navLinks) navLinks.classList.add('mobile-open');
+      if (overlay) overlay.classList.add('mobile-open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileNav() {
+      const navLinks = document.getElementById('main-nav-links');
+      const overlay = document.getElementById('mobile-nav-overlay');
+      if (navLinks) navLinks.classList.remove('mobile-open');
+      if (overlay) overlay.classList.remove('mobile-open');
+      document.body.style.overflow = '';
+    }
+
+    // Close mobile drawer on Escape key
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeMobileNav();
+    });
+
+    // Close mobile drawer if viewport resized to desktop
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 820) closeMobileNav();
+    });
+
     function showTab(tabName) {
+      closeMobileNav();
       document.getElementById('attendance-view').style.display = tabName === 'attendance' ? 'block' : 'none';
       document.getElementById('storage-view').style.display = tabName === 'storage' ? 'block' : 'none';
       document.getElementById('roster-view').style.display = tabName === 'roster' ? 'block' : 'none';
@@ -2133,6 +2919,8 @@
     function onStudentDataUpdated() {
       const length = Object.keys(studentDict).length;
       document.getElementById('nav-count-badge').innerHTML = `👥 ${length} Students`;
+      const mobCount = document.getElementById('mobile-count-badge');
+      if (mobCount) mobCount.innerHTML = `👥 ${length} Students`;
       document.getElementById('roster-count-badge').innerText = `Length: ${length} Students`;
       document.getElementById('summary-length').innerText = `${length} Students`;
 
@@ -2150,6 +2938,8 @@
       const dept = currentUser.deptName || 'Engineering Department';
 
       document.getElementById('nav-dept-badge').innerText = classSec;
+      const mobDept = document.getElementById('mobile-dept-badge');
+      if (mobDept) mobDept.innerText = classSec;
       document.getElementById('dept-header-title').innerText = classSec;
       document.getElementById('dept-header-sub').innerText = dept;
       document.title = `${classSec} - Attendance Portal`;
@@ -2216,19 +3006,35 @@
 
       let rollColIdx = -1;
       let nameColIdx = -1;
+      let mobileColIdx = -1;
       let startRow = 0;
 
       for (let r = 0; r < Math.min(rows.length, 5); r++) {
         const row = rows[r];
         if (!Array.isArray(row)) continue;
 
+        // First pass: look for explicit roll/reg/id columns, student name, and mobile
         for (let c = 0; c < row.length; c++) {
           const val = String(row[c] || '').trim().toLowerCase();
-          if (rollColIdx === -1 && (val.includes('roll') || val.includes('reg') || val.includes('id') || val === 'r.no' || val === 's.no')) {
+          if (rollColIdx === -1 && (val.includes('roll') || val.includes('reg') || val.includes('register') || val === 'r.no')) {
             rollColIdx = c;
           }
           if (nameColIdx === -1 && (val.includes('name') || val.includes('student'))) {
             nameColIdx = c;
+          }
+          if (mobileColIdx === -1 && (val.includes('mobile') || val.includes('phone') || val.includes('contact') || val.includes('cell') || val.includes('number'))) {
+            mobileColIdx = c;
+          }
+        }
+
+        // Second pass fallback for generic ID / S.No if no explicit roll column found
+        if (rollColIdx === -1) {
+          for (let c = 0; c < row.length; c++) {
+            const val = String(row[c] || '').trim().toLowerCase();
+            if (c !== nameColIdx && c !== mobileColIdx && (val.includes('id') || val === 's.no' || val === 'sl.no')) {
+              rollColIdx = c;
+              break;
+            }
           }
         }
 
@@ -2241,6 +3047,7 @@
       if (rollColIdx === -1 || nameColIdx === -1) {
         rollColIdx = 0;
         nameColIdx = 1;
+        if (rows[0] && rows[0].length >= 3) mobileColIdx = 2;
         startRow = 0;
       }
 
@@ -2250,11 +3057,15 @@
 
         let roll = String(row[rollColIdx] || '').trim();
         let name = String(row[nameColIdx] || '').trim();
+        let mobile = mobileColIdx !== -1 ? String(row[mobileColIdx] || '').trim() : '';
 
         if (!roll || !name) continue;
         if (/roll|reg|name/i.test(roll) && /roll|reg|name/i.test(name)) continue;
 
-        dict[roll] = name.toUpperCase();
+        dict[roll] = {
+          name: name.toUpperCase(),
+          mobile: mobile
+        };
       }
 
       return dict;
@@ -2312,9 +3123,9 @@
     // Sample Template Download
     function downloadSampleTemplate(type) {
       const sampleData = [
-        { "Roll No": "101", "Student Name": "STUDENT NAME 1" },
-        { "Roll No": "102", "Student Name": "STUDENT NAME 2" },
-        { "Roll No": "103", "Student Name": "STUDENT NAME 3" }
+        { "Roll No": "101", "Student Name": "STUDENT NAME 1", "Mobile Number": "9876543210" },
+        { "Roll No": "102", "Student Name": "STUDENT NAME 2", "Mobile Number": "9876543211" },
+        { "Roll No": "103", "Student Name": "STUDENT NAME 3", "Mobile Number": "9876543212" }
       ];
 
       if (type === 'xlsx' && typeof XLSX !== 'undefined') {
@@ -2323,18 +3134,19 @@
         XLSX.utils.book_append_sheet(wb, ws, "Students");
         XLSX.writeFile(wb, "College_Student_Roster_Template.xlsx");
       } else {
-        const csvContent = "data:text/csv;charset=utf-8," +
-          "Roll No,Student Name\n" +
-          sampleData.map(e => `${e["Roll No"]},${e["Student Name"]}`).join("\n");
-        const encodedUri = encodeURI(csvContent);
+        const csvContent = "Roll No,Student Name,Mobile Number\n" +
+          sampleData.map(e => `${e["Roll No"]},${e["Student Name"]},${e["Mobile Number"]}`).join("\n");
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "College_Student_Roster_Template.csv");
+        link.href = url;
+        link.download = "College_Student_Roster_Template.csv";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        URL.revokeObjectURL(url);
       }
-      showToast('Downloaded clean student template!');
+      showToast('Downloaded clean student template with Mobile Numbers!');
     }
 
     function clearRosterData() {
@@ -2355,8 +3167,10 @@
       let index = 1;
 
       keys.forEach(roll => {
-        const name = studentDict[roll];
-        if (filterText && !roll.toLowerCase().includes(filterText) && !name.toLowerCase().includes(filterText)) {
+        const sObj = getStudentObj(roll);
+        const name = sObj.name;
+        const mobile = sObj.mobile;
+        if (filterText && !roll.toLowerCase().includes(filterText) && !name.toLowerCase().includes(filterText) && !mobile.toLowerCase().includes(filterText)) {
           return;
         }
 
@@ -2365,6 +3179,7 @@
           <td style="color: var(--text-muted);">${index++}</td>
           <td><strong style="color: var(--neon-cyan); font-size: 0.95rem;">${escapeHtml(roll)}</strong></td>
           <td>${escapeHtml(name)}</td>
+          <td><span style="color: var(--text-muted); font-size: 0.9rem;">${escapeHtml(mobile || '-')}</span></td>
           <td style="text-align: center; white-space: nowrap;">
             <button class="action-edit-btn" onclick="openEditModal('${escapeAttr(roll)}')" title="Edit Student">
               ✏️ Edit
@@ -2380,7 +3195,7 @@
       if (keys.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="4">
+            <td colspan="5">
               <div class="empty-state">
                 <span class="empty-state-icon">📋</span>
                 <p><strong>No students in roster yet.</strong></p>
@@ -2389,7 +3204,7 @@
             </td>
           </tr>`;
       } else if (tbody.children.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No students match your search.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">No students match your search.</td></tr>`;
       }
     }
 
@@ -2401,31 +3216,35 @@
     function addSingleStudent() {
       const rollInput = document.getElementById('new-roll');
       const nameInput = document.getElementById('new-name');
+      const mobileInput = document.getElementById('new-mobile');
       const roll = rollInput.value.trim();
       const name = nameInput.value.trim().toUpperCase();
+      const mobile = mobileInput ? mobileInput.value.trim() : '';
 
       if (!roll || !name) {
         alert('Please enter both Roll Number and Student Name.');
         return;
       }
 
-      studentDict[roll] = name;
+      studentDict[roll] = { name: name, mobile: mobile };
       saveStudentData();
       renderRosterTable();
 
       rollInput.value = '';
       nameInput.value = '';
+      if (mobileInput) mobileInput.value = '';
       showToast(`Added ${roll} - ${name} to roster!`);
     }
 
     // --- Edit Student Modal Logic ---
     function openEditModal(roll) {
-      const name = studentDict[roll];
-      if (!name) return;
+      const sObj = getStudentObj(roll);
+      if (!studentDict[roll]) return;
 
       document.getElementById('edit-original-roll').value = roll;
       document.getElementById('edit-roll').value = roll;
-      document.getElementById('edit-name').value = name;
+      document.getElementById('edit-name').value = sObj.name;
+      document.getElementById('edit-mobile').value = sObj.mobile || '';
       document.getElementById('edit-student-modal').style.display = 'flex';
       document.getElementById('edit-name').focus();
     }
@@ -2438,6 +3257,7 @@
       const origRoll = document.getElementById('edit-original-roll').value;
       const newRoll = document.getElementById('edit-roll').value.trim();
       const newName = document.getElementById('edit-name').value.trim().toUpperCase();
+      const newMobile = document.getElementById('edit-mobile').value.trim();
 
       if (!newRoll || !newName) {
         alert('Please provide both Roll Number and Student Name.');
@@ -2447,7 +3267,7 @@
       if (origRoll !== newRoll) {
         delete studentDict[origRoll];
       }
-      studentDict[newRoll] = newName;
+      studentDict[newRoll] = { name: newName, mobile: newMobile };
 
       saveStudentData();
       renderRosterTable();
@@ -2456,7 +3276,7 @@
     }
 
     function deleteStudent(roll) {
-      const name = studentDict[roll];
+      const name = getStudentName(roll);
       if (confirm(`Remove student ${roll} - ${name} from roster?`)) {
         delete studentDict[roll];
         saveStudentData();
@@ -2479,8 +3299,23 @@
 
       document.getElementById('prof-faculty').value = currentUser.name || '';
       document.getElementById('prof-email').value = currentUser.email || '';
+      document.getElementById('prof-textbee-key').value = currentUser.textbeeKey || DEFAULT_TEXTBEE_KEY;
+      document.getElementById('prof-textbee-device-id').value = currentUser.textbeeDeviceId || '';
 
       document.getElementById('summary-class').innerText = currentUser.classSection || '-';
+    }
+
+    function toggleTextBeeKeyVisibility() {
+      const input = document.getElementById('prof-textbee-key');
+      const btn = document.getElementById('btn-toggle-tb-key');
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        if (btn) btn.innerText = '🔒';
+      } else {
+        input.type = 'password';
+        if (btn) btn.innerText = '👁️';
+      }
     }
 
     function handleSaveProfile(e) {
@@ -2512,6 +3347,8 @@
       }
 
       const classSec = buildClassString(year, deptShort, section);
+      const textbeeKey = (document.getElementById('prof-textbee-key').value || '').trim() || DEFAULT_TEXTBEE_KEY;
+      const textbeeDeviceId = (document.getElementById('prof-textbee-device-id').value || '').trim();
 
       currentUser.deptName = dept;
       currentUser.classSection = classSec;
@@ -2520,6 +3357,8 @@
       currentUser.section = section;
       currentUser.name = faculty;
       currentUser.email = newLoginId;
+      currentUser.textbeeKey = textbeeKey;
+      currentUser.textbeeDeviceId = textbeeDeviceId;
 
       const idx = users.findIndex(u => u.id === currentUser.id);
       if (idx !== -1) {
@@ -2612,9 +3451,9 @@
         yearSelect.value = currentYear;
       }
 
-      // Default month to current month if not set
+      // Default month to current month if user has not explicitly changed it
       const monthSelect = document.getElementById('storage-month-select');
-      if (!monthSelect.value) {
+      if (monthSelect && !monthSelect.dataset.userChanged) {
         monthSelect.value = String(new Date().getMonth() + 1).padStart(2, '0');
       }
 
@@ -2651,6 +3490,8 @@
     }
 
     function handleStorageYearOrMonthChange() {
+      const monthSelect = document.getElementById('storage-month-select');
+      if (monthSelect) monthSelect.dataset.userChanged = 'true';
       populateStorageDateOptions();
       renderAttendanceStorage();
     }
@@ -2694,7 +3535,7 @@
         card.innerHTML = `
           <div class="day-header">
             <div>
-              <strong style="font-size: 1.05rem; color: #fff;">📅 Date: ${day}</strong>
+              <strong style="font-size: 1.05rem; color: #0f172a;">📅 Date: ${day}</strong>
               <span style="font-size: 0.82rem; color: var(--neon-cyan); margin-left: 8px;">(${day}/${selectedMonth}/${selectedYear})</span>
             </div>
             <div style="font-size: 0.78rem; color: var(--text-muted);">
@@ -2732,7 +3573,7 @@
           <div class="session-box">
             <div class="session-title">
               <span>${sessionLabel}</span>
-              <span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">Not Recorded</span>
+              <span class="badge" style="background: rgba(0,0,0,0.04); color: var(--text-muted);">Not Recorded</span>
             </div>
             <p style="font-size: 0.78rem; color: var(--text-muted); padding: 8px 0;">No ${sessionType} attendance logged for this day.</p>
           </div>
@@ -2749,7 +3590,7 @@
         <div class="session-box has-data">
           <div class="session-title">
             <span>${sessionLabel}</span>
-            <span class="badge" style="background: rgba(56,239,125,0.15); color: ${pctColor}; border: 1px solid rgba(56,239,125,0.3);">
+            <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: ${pctColor}; border: 1px solid rgba(16, 185, 129, 0.25);">
               ${sessionData.percentage}% Present
             </span>
           </div>
@@ -2758,7 +3599,7 @@
             <div>🚫 Absentees (${sessionData.absCount}): <span style="color: var(--neon-pink); font-size: 0.78rem;">${absRolls}</span></div>
             <div>⚡ On-Duty (${sessionData.odCount}): <span style="color: var(--neon-amber); font-size: 0.78rem;">${odRolls}</span></div>
           </div>
-          <div style="display: flex; gap: 6px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
+          <div style="display: flex; gap: 6px; margin-top: 10px; border-top: 1px solid rgba(15, 23, 42, 0.08); padding-top: 8px;">
             <button type="button" id="${btnId}" class="btn-primary btn-sm" style="flex:1; padding: 5px 8px; font-size: 0.72rem;" onclick="toggleInlineReport('${year}', '${month}', '${day}', '${sessionType}')">
               📄 View Report
             </button>
@@ -2767,7 +3608,7 @@
             </button>
           </div>
           <!-- Inline report container rendered right in the space (never navigates away to home page) -->
-          <div id="${boxId}" style="display: none; margin-top: 12px; padding: 12px; background: rgba(2, 6, 23, 0.92); border: 1px solid rgba(0, 242, 254, 0.35); border-radius: 10px; font-size: 0.78rem; font-family: 'Consolas', 'Menlo', monospace; line-height: 1.6; animation: fadeIn 0.2s ease;">
+          <div id="${boxId}" style="display: none; margin-top: 12px; padding: 12px; background: rgba(248, 250, 252, 0.96); border: 1px solid rgba(2, 132, 199, 0.25); box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08); border-radius: 10px; font-size: 0.78rem; font-family: 'Consolas', 'Menlo', monospace; line-height: 1.6; color: #0f172a; animation: fadeIn 0.2s ease;">
           </div>
         </div>
       `;
@@ -2807,30 +3648,30 @@
       const rawReport = formatReportFromRecord(rec);
 
       box.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(15, 23, 42, 0.08); padding-bottom: 8px; margin-bottom: 8px;">
           <div>
-            <strong style="color: #fff; font-size: 0.82rem;">📋 ${rec.displayDate} (${rec.session})</strong>
+            <strong style="color: #0f172a; font-size: 0.82rem;">📋 ${rec.displayDate} (${rec.session})</strong>
           </div>
           <div style="display: flex; gap: 6px;">
-            <button type="button" class="btn-secondary btn-sm" style="padding: 2px 8px; font-size: 0.68rem;" onclick="copySpecificReportText(\`${escapeAttr(rawReport)}\`)">📋 Copy</button>
+            <button type="button" class="btn-secondary btn-sm" style="padding: 2px 8px; font-size: 0.68rem;" onclick="copySpecificReportRecord('${year}', '${month}', '${day}', '${session}')">📋 Copy</button>
             <button type="button" class="action-del-btn" style="padding: 2px 6px; font-size: 0.68rem;" onclick="toggleInlineReport('${year}', '${month}', '${day}', '${session}')">✕</button>
           </div>
         </div>
 
-        <div style="font-size: 0.76rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 8px;">
+        <div style="font-size: 0.76rem; color: #334155; line-height: 1.5; margin-bottom: 8px;">
           <div>Class: <strong>${rec.classSection}</strong></div>
           <div>Present: <strong style="color: var(--neon-green);">${rec.presentCount} / ${rec.totalStudents}</strong> (${rec.percentage}%)</div>
           <div>Absent: <strong style="color: var(--neon-pink);">${rec.absCount}</strong> | On-Duty: <strong style="color: var(--neon-amber);">${rec.odCount}</strong></div>
         </div>
 
-        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.08);">
+        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(15, 23, 42, 0.12);">
           <strong style="color: var(--neon-pink); display: block; margin-bottom: 3px;">🚫 ABSENTEES (${rec.absCount}):</strong>
           <div style="max-height: 110px; overflow-y: auto; padding-left: 2px;">
             ${absListHtml}
           </div>
         </div>
 
-        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.08);">
+        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(15, 23, 42, 0.12);">
           <strong style="color: var(--neon-amber); display: block; margin-bottom: 3px;">⚡ ON-DUTY STUDENTS (${rec.odCount}):</strong>
           <div style="max-height: 110px; overflow-y: auto; padding-left: 2px;">
             ${odListHtml}
@@ -2840,6 +3681,17 @@
 
       box.style.display = 'block';
       if (btn) btn.innerHTML = '▲ Hide Report';
+    }
+
+    function copySpecificReportRecord(year, month, day, session) {
+      const store = getAttendanceStorage();
+      const rec = store[year] && store[year][month] && store[year][month][day] && store[year][month][day][session];
+      if (!rec) {
+        showToast("Error: Record not found to copy");
+        return;
+      }
+      const rawReport = formatReportFromRecord(rec);
+      copySpecificReportText(rawReport);
     }
 
     function copySpecificReportText(text) {
@@ -2927,16 +3779,17 @@
         XLSX.writeFile(wb, `${fileName}.xlsx`);
       } else {
         const headers = Object.keys(rows[0]);
-        const csvContent = "data:text/csv;charset=utf-8," +
-          headers.join(",") + "\n" +
+        const csvContent = headers.join(",") + "\n" +
           rows.map(r => headers.map(h => `"${String(r[h] || '').replace(/"/g, '""')}"`).join(",")).join("\n");
-        const encodedUri = encodeURI(csvContent);
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `${fileName}.csv`);
+        link.href = url;
+        link.download = `${fileName}.csv`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        URL.revokeObjectURL(url);
       }
 
       showToast(`📊 Exported monthly attendance register!`);
@@ -2985,8 +3838,10 @@
       let pc = (pr / totalStudents) * 100;
       let npc = Math.round(pc);
 
-      let result = arrab.map(key => studentDict[key] || "Unknown");
-      let resod = arrod.map(key => studentDict[key] || "Unknown");
+      let result = arrab.map(key => getStudentName(key));
+      let resultMobiles = arrab.map(key => getStudentMobile(key));
+      let resod = arrod.map(key => getStudentName(key));
+      let resodMobiles = arrod.map(key => getStudentMobile(key));
 
       const classHeading = (currentUser && currentUser.classSection) ? currentUser.classSection : 'Class Attendance';
 
@@ -3034,6 +3889,84 @@
       }
 
       reportCard.innerHTML = reportHtml;
+
+      // Render Absent Student Messages Box
+      const absMsgCard = document.getElementById("absent-messages-card");
+      if (lab > 0) {
+        const dayName = getDayName(dateVal);
+        const autoMsgText = generateAbsentStudentMessage(dayName, fd, session);
+        const validAbsentMobiles = resultMobiles.map(m => (m || '').replace(/\D/g, '')).filter(Boolean);
+
+        window.lastAbsentMobiles = validAbsentMobiles;
+        window.lastAbsentMsgText = autoMsgText;
+
+        let msgHtml = `
+          <div class="glass-card" style="border: 1px solid rgba(244, 63, 94, 0.3); background: rgba(255, 241, 242, 0.95);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(244, 63, 94, 0.2); padding-bottom: 12px; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <h3 style="font-size: 1.15rem; color: #be123c; margin: 0;">
+                  📱 Absent Student Automated Messages (${lab})
+                </h3>
+                <p style="font-size: 0.8rem; color: #9f1239; margin: 2px 0 0 0;">
+                  Direct SMS notification dispatch for absent students
+                </p>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn-primary btn-sm" style="background: #8b5cf6; border: none;" onclick="sendTextBeeSMS(window.lastAbsentMobiles, window.lastAbsentMsgText)">
+                  🐝 Send SMS via TextBee
+                </button>
+                <button type="button" class="btn-primary btn-sm" style="background: #be123c; border: none;" onclick="copyAllAbsentMessages(window.lastAbsentMessages)">
+                  📋 Copy All
+                </button>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+        `;
+
+        const messagesArr = [];
+        arrab.forEach((r, i) => {
+          const stName = result[i];
+          const stMobile = resultMobiles[i];
+          const msgText = autoMsgText;
+          messagesArr.push(`${r} - ${stName}: ${msgText}`);
+          const cleanPhone = (stMobile || '').replace(/\D/g, '');
+          const waUrl = cleanPhone ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msgText)}` : '#';
+          const smsUrl = cleanPhone ? `sms:${cleanPhone}?body=${encodeURIComponent(msgText)}` : '#';
+
+          msgHtml += `
+            <div style="background: #ffffff; border: 1px solid rgba(244, 63, 94, 0.2); border-radius: 8px; padding: 12px; font-size: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <div>
+                  <strong style="color: #0f172a;">${escapeHtml(r)} - ${escapeHtml(stName)}</strong>
+                  <span style="color: var(--text-muted); font-size: 0.8rem; margin-left: 8px;">
+                    📞 ${escapeHtml(stMobile || 'No Mobile Registered')}
+                  </span>
+                </div>
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; font-family: monospace; color: #334155; margin-bottom: 8px;">
+                "${escapeHtml(msgText)}"
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn-success btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #8b5cf6; border: none;" onclick="sendTextBeeSMS(['${cleanPhone}'], '${escapeAttr(msgText)}')">🐝 Send SMS</button>
+                ${cleanPhone ? `<a href="${waUrl}" target="_blank" class="btn-success btn-sm" style="text-decoration: none; padding: 4px 10px; font-size: 0.75rem;">💬 WhatsApp</a>` : ''}
+                <button type="button" class="btn-secondary btn-sm" style="padding: 4px 10px; font-size: 0.75rem;" onclick="copyAbsentMessage('${escapeAttr(msgText)}')">📋 Copy Message</button>
+              </div>
+            </div>
+          `;
+        });
+
+        msgHtml += `</div></div>`;
+        window.lastAbsentMessages = messagesArr;
+        absMsgCard.innerHTML = msgHtml;
+        absMsgCard.style.display = "block";
+
+        // Silent background SMS handler (never opens popups or xdg-open dialogs)
+        sendBackgroundSMS(validAbsentMobiles, autoMsgText);
+      } else {
+        absMsgCard.style.display = "none";
+        absMsgCard.innerHTML = "";
+      }
+
       statsOverview.scrollIntoView({ behavior: 'smooth' });
 
       // 3. Save into hierarchical storage (Year -> Month -> Day -> FN/AN). Replaces if same session occurs.
@@ -3052,8 +3985,8 @@
         absCount: lab,
         odCount: lod,
         percentage: npc,
-        absentees: arrab.map((r, i) => ({ roll: r, name: result[i] })),
-        onDuty: arrod.map((r, i) => ({ roll: r, name: resod[i] })),
+        absentees: arrab.map((r, i) => ({ roll: r, name: result[i], mobile: resultMobiles[i] })),
+        onDuty: arrod.map((r, i) => ({ roll: r, name: resod[i], mobile: resodMobiles[i] })),
         savedAt: new Date().toISOString()
       };
 
@@ -3077,10 +4010,15 @@
       sessionOverride = null;
       updateLiveDateTimeDisplay();
 
-      // Hide stats cards and report below the box
+      // Hide stats cards, report, and absent messages below the box
       document.getElementById("stats-overview").style.display = 'none';
       reportCard.style.display = 'none';
       reportCard.innerHTML = '';
+      const absMsgCard = document.getElementById("absent-messages-card");
+      if (absMsgCard) {
+        absMsgCard.style.display = 'none';
+        absMsgCard.innerHTML = '';
+      }
     }
 
     function copyt() {
